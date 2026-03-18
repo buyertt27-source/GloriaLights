@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Home - Ensiklopedia Iman</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Montserrat:wght@300;500;700;italic&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --glass-bg: rgba(0, 0, 0, 0.45);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --text-color: #ffffff;
+            --accent: #ffcc00;
+        }
+
+        html, body { overflow-x: hidden; margin: 0; padding: 0; width: 100%; }
+
+        @keyframes blurIn {
+            from { filter: blur(30px); opacity: 0; transform: scale(1.03); }
+            to { filter: blur(0); opacity: 1; transform: scale(1); }
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+                        url('https://files.catbox.moe/zoym9j.jpg') center/cover fixed;
+            color: var(--text-color);
+            min-height: 100vh;
+            animation: blurIn 2.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+            padding-bottom: 50px; /* Jarak bawah agar tidak terlalu mepet layar */
+        }
+
+        * { box-sizing: border-box; }
+
+        .top-bar {
+            position: sticky; top: 15px; margin: 15px 20px; padding: 12px 25px;
+            background: rgba(0,0,0,0.5); backdrop-filter: blur(15px);
+            border-radius: 50px; border: 1px solid var(--glass-border);
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 1000;
+        }
+
+        .btn-back {
+            display: flex; justify-content: center; align-items: center;
+            width: 40px; height: 40px; border-radius: 50%;
+            background: rgba(255, 204, 0, 0.1); border: 1px solid var(--accent);
+            color: var(--accent); text-decoration: none;
+            transition: all 0.5s ease; z-index: 2;
+        }
+        .btn-back svg { width: 20px; height: 20px; }
+        .btn-back:hover { 
+            background: var(--accent); color: #000; 
+            transform: translateX(-5px) scale(1.05); 
+            box-shadow: 0 0 20px rgba(255, 204, 0, 0.6); 
+        }
+
+        #wib-clock {
+            position: absolute; left: 50%; transform: translateX(-50%);
+            font-size: 0.9rem; font-weight: 500; letter-spacing: 1px; z-index: 1;
+        }
+
+        .container { max-width: 900px; margin: 40px auto; padding: 0 20px; text-align: center; }
+        
+        @keyframes breatheGlow {
+            0%, 100% { text-shadow: 0 0 10px rgba(255,204,0,0.2); transform: scale(1); }
+            50% { text-shadow: 0 0 25px rgba(255,204,0,0.7); transform: scale(1.01); }
+        }
+        h1 { 
+            font-family: 'Cinzel', serif; font-size: clamp(1.5rem, 6vw, 2.2rem); 
+            letter-spacing: 3px; margin-bottom: 40px; color: var(--accent); 
+            animation: breatheGlow 4s ease-in-out infinite; 
+        }
+
+        .folder-list { display: flex; flex-direction: column; gap: 20px; }
+
+        @keyframes floatUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .folder {
+            background: var(--glass-bg); backdrop-filter: blur(15px);
+            padding: 25px 30px; border-radius: 20px;
+            text-decoration: none; color: var(--text-color);
+            border: 1px solid var(--glass-border);
+            display: flex; flex-direction: column; text-align: left; cursor: pointer;
+            opacity: 0; transition: all 0.6s ease-out;
+        }
+
+        .folder:nth-child(1) { animation: floatUp 1.2s cubic-bezier(0.25, 1, 0.5, 1) 0.5s forwards; }
+        .folder:nth-child(2) { animation: floatUp 1.2s cubic-bezier(0.25, 1, 0.5, 1) 0.8s forwards; }
+        .folder:nth-child(3) { animation: floatUp 1.2s cubic-bezier(0.25, 1, 0.5, 1) 1.1s forwards; }
+        .folder:nth-child(4) { animation: floatUp 1.2s cubic-bezier(0.25, 1, 0.5, 1) 1.4s forwards; }
+
+        .folder:hover {
+            transform: translateX(12px); background: rgba(255,255,255,0.08);
+            border-color: var(--accent); box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+        }
+
+        .folder-header { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+
+        .folder h2 { 
+            font-family: 'Cinzel', serif; margin: 0; color: var(--accent); 
+            font-size: clamp(1.1rem, 4vw, 1.5rem); font-weight: 700; line-height: 1.3;
+            transition: color 0.5s ease;
+        }
+
+        .btn-close {
+            display: none; background: rgba(255, 255, 255, 0.1); color: var(--text-color);
+            border: 1px solid var(--glass-border); border-radius: 50%;
+            width: 35px; height: 35px; text-align: center; line-height: 33px; 
+            font-size: 1.2rem; transition: 0.4s;
+        }
+        .btn-close:hover { background: rgba(255,0,0,0.5); color: white; transform: rotate(90deg); }
+        .folder.active .btn-close { display: block; animation: floatUp 0.8s ease forwards; }
+
+        .folder p { 
+            margin: 0; padding-top: 0; opacity: 0; max-height: 0; overflow: hidden;
+            font-weight: 300; font-size: clamp(0.85rem, 3vw, 0.95rem); border-top: 1px solid transparent; 
+            transition: max-height 0.8s ease-in-out, opacity 0.6s ease-in-out 0.1s, margin-top 0.8s ease-in-out, padding-top 0.8s ease-in-out, border-color 0.8s ease-in-out;
+        }
+
+        .folder.active p {
+            opacity: 0.85; max-height: 300px; margin-top: 15px; padding-top: 15px; border-top-color: rgba(255,255,255,0.1);
+        }
+
+        /* --- FITUR BARU: RANDOM VERSE SLOT MACHINE --- */
+        .random-verse-section {
+            margin-top: 50px;
+            background: var(--glass-bg); backdrop-filter: blur(15px);
+            padding: 35px 30px; border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            opacity: 0; animation: floatUp 1.2s cubic-bezier(0.25, 1, 0.5, 1) 1.8s forwards; /* Muncul paling akhir */
+            display: flex; flex-direction: column; align-items: center;
+        }
+        
+        .random-verse-section h3 {
+            font-family: 'Cinzel', serif; color: var(--accent); margin-top: 0; margin-bottom: 25px;
+            letter-spacing: 2px; font-size: 1.2rem;
+        }
+
+        /* Container teks dibatasi tingginya agar tombol di bawah tidak naik-turun saat mengacak */
+        .verse-display-box {
+            min-height: 120px; width: 100%;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        }
+
+        .verse-text {
+            font-size: clamp(1rem, 3.5vw, 1.2rem); font-style: italic; line-height: 1.6; margin: 0 0 10px 0;
+            text-align: center;
+        }
+
+        .verse-ref { font-size: 0.95rem; font-weight: 600; color: var(--accent); }
+
+        .btn-shuffle {
+            margin-top: 20px; padding: 12px 30px;
+            background: transparent; border: 1px solid var(--accent); color: var(--accent);
+            border-radius: 50px; font-family: 'Montserrat', sans-serif; font-weight: 700;
+            cursor: pointer; transition: 0.3s; display: inline-flex; align-items: center; gap: 8px;
+        }
+        .btn-shuffle:hover:not(:disabled) { background: var(--accent); color: #000; box-shadow: 0 0 20px rgba(255,204,0,0.5); transform: translateY(-3px); }
+        .btn-shuffle:disabled { opacity: 0.5; cursor: not-allowed; border-color: #777; color: #777; }
+        .btn-shuffle svg { width: 18px; height: 18px; transition: 0.3s; }
+        .btn-shuffle:hover:not(:disabled) svg { transform: rotate(180deg); }
+
+        /* KELAS ANIMASI SLOT (DIKENDALIKAN JS) */
+        @keyframes slotSpin {
+            0% { transform: translateY(-15px); filter: blur(4px); opacity: 0.4; }
+            50% { transform: translateY(15px); filter: blur(6px); opacity: 0.2; }
+            100% { transform: translateY(-15px); filter: blur(4px); opacity: 0.4; }
+        }
+        .is-spinning {
+            animation: slotSpin 0.1s linear infinite; /* Gerak super cepat! */
+        }
+
+        @keyframes popReveal {
+            0% { transform: scale(0.8) translateY(-20px); filter: blur(10px); opacity: 0; }
+            50% { transform: scale(1.05) translateY(0); filter: blur(0); opacity: 1; }
+            100% { transform: scale(1) translateY(0); filter: blur(0); opacity: 1; }
+        }
+        .is-revealed {
+            animation: popReveal 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        /* --- LAYAR LOADING KLIK KE-2 --- */
+        #nav-loading {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.95);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 10000; opacity: 0; pointer-events: none; transition: opacity 0.8s ease;
+        }
+        #nav-loading.active { opacity: 1; pointer-events: auto; }
+        .nav-progress-container { width: 250px; height: 3px; background: rgba(255,255,255,0.1); border-radius: 5px; overflow: hidden; margin-bottom: 15px; }
+        #nav-bar { width: 0%; height: 100%; background: var(--accent); box-shadow: 0 0 15px var(--accent); }
+        .loading-text { font-family: 'Montserrat', sans-serif; font-style: italic; color: var(--accent); font-size: 0.95rem; letter-spacing: 1px; animation: breatheGlow 2s infinite ease-in-out; }
+    </style>
+</head>
+<body>
+
+    <div id="nav-loading">
+        <div class="nav-progress-container"><div id="nav-bar"></div></div>
+        <div class="loading-text">Memuat halaman rohani...</div>
+    </div>
+
+    <audio id="bgMusic" autoplay loop><source src="https://www.mboxdrive.com/Transeamus.mp3" type="audio/mpeg"></audio>
+
+    <div class="top-bar">
+        <a href="index.html" class="btn-back" title="Kembali ke Beranda">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </a>
+        <div id="wib-clock">WIB: --:--:--</div>
+        <div style="width: 40px;"></div> 
+    </div>
+
+    <div class="container">
+        <h1>DAFTAR PUSTAKA IMAN</h1>
+        
+        <div class="folder-list">
+            <a href="ayatemas.html" class="folder folder-link">
+                <div class="folder-header">
+                    <h2>I. AYAT EMAS ALKITAB</h2><div class="btn-close">✖</div>
+                </div>
+                <p>Bagian ini menyajikan kumpulan janji-janji Tuhan yang hidup, berfungsi sebagai sumber kekuatan harian dan pelita bagi langkah kaki Anda dalam berbagai musim kehidupan rohani.</p>
+            </a>
+
+            <a href="mukjizat.html" class="folder folder-link">
+                <div class="folder-header">
+                    <h2>II. MUKJIZAT TUHAN YESUS</h2><div class="btn-close">✖</div>
+                </div>
+                <p>Mempelajari saksi bisu kekuasaan Sang Khalik di bumi guna mempertebal iman akan kemahakuasaan Kristus yang melampaui logika dan nalar manusia semata.</p>
+            </a>
+
+            <a href="santosanta.html" class="folder folder-link">
+                <div class="folder-header">
+                    <h2>III. RIWAYAT SANTO & SANTA</h2><div class="btn-close">✖</div>
+                </div>
+                <p>Eksplorasi mendalam mengenai teladan hidup para orang kudus, mencakup riwayat kesucian, tanggal wafat, dan fungsi perantara doa sebagai inspirasi nyata iman kita.</p>
+            </a>
+
+            <a href="renungan.html" class="folder folder-link">
+                <div class="folder-header">
+                    <h2>IV. RENUNGAN KITAB SUCI</h2><div class="btn-close">✖</div>
+                </div>
+                <p>Menyajikan refleksi teologis harian yang menghubungkan sabda Tuhan dengan realita kehidupan untuk menuntun batin Anda agar selalu selaras dengan kehendak-Nya.</p>
+            </a>
+        </div>
+
+        <div class="random-verse-section">
+            <h3>SABDA HARI INI</h3>
+            <div id="verse-display" class="verse-display-box">
+                <p id="verse-text">"Memuat Sabda..."</p>
+                <span id="verse-ref"></span>
+            </div>
+            <button id="btn-shuffle" class="btn-shuffle">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="16 3 21 3 21 8"></polyline>
+                    <line x1="4" y1="20" x2="21" y2="3"></line>
+                    <polyline points="21 16 21 21 16 21"></polyline>
+                    <line x1="15" y1="15" x2="21" y2="21"></line>
+                    <line x1="4" y1="4" x2="9" y2="9"></line>
+                </svg> ACAK AYAT
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        // Logika Jam
+        function updateClock() {
+            const time = new Date().toLocaleTimeString('id-ID', {timeZone:'Asia/Jakarta', hour12:false});
+            document.getElementById('wib-clock').textContent = `WIB: ${time}`;
+        }
+        setInterval(updateClock, 1000); updateClock();
+
+        window.addEventListener('click', () => { document.getElementById('bgMusic').play(); }, { once: true });
+
+        // KUMPULAN AYAT UNTUK DIACAK
+        const bibleVerses = [
+            { t: '"Sebab Allah memberikan kepada kita bukan roh ketakutan, melainkan roh yang membangkitkan kekuatan, kasih dan ketertiban."', r: '2 Timotius 1:7' },
+            { t: '"Segala perkara dapat kutanggung di dalam Dia yang memberi kekuatan kepadaku."', r: 'Filipi 4:13' },
+            { t: '"Hati yang gembira adalah obat yang manjur, tetapi semangat yang patah mengeringkan tulang."', r: 'Amsal 17:22' },
+            { t: '"Janganlah hendaknya kamu kuatir tentang apapun juga, tetapi nyatakanlah dalam segala hal keinginanmu kepada Allah dalam doa dan permohonan dengan ucapan syukur."', r: 'Filipi 4:6' },
+            { t: '"Serahkanlah segala kekuatiranmu kepada-Nya, sebab Ia yang memelihara kamu."', r: '1 Petrus 5:7' },
+            { t: '"Pencobaan-pencobaan yang kamu alami ialah pencobaan-pencobaan biasa, yang tidak melebihi kekuatan manusia. Sebab Allah setia dan karena itu Ia tidak akan membiarkan kamu dicobai melampaui kekuatanmu."', r: '1 Korintus 10:13' },
+            { t: '"Karena masa depan sungguh ada, dan harapanmu tidak akan hilang."', r: 'Amsal 23:18' },
+            { t: '"Tuhan adalah gembalaku, takkan kekurangan aku."', r: 'Mazmur 23:1' },
+            { t: '"Akulah jalan dan kebenaran dan hidup. Tidak ada seorangpun yang datang kepada Bapa, kalau tidak melalui Aku."', r: 'Yohanes 14:6' }
+        ];
+
+        const verseText = document.getElementById('verse-text');
+        const verseRef = document.getElementById('verse-ref');
+        const verseDisplay = document.getElementById('verse-display');
+        const btnShuffle = document.getElementById('btn-shuffle');
+
+        // Fungsi Tampilkan Ayat
+        function displayRandomVerse() {
+            const v = bibleVerses[Math.floor(Math.random() * bibleVerses.length)];
+            verseText.textContent = v.t;
+            verseRef.textContent = `(${v.r})`;
+        }
+        displayRandomVerse(); // Tampilkan saat pertama kali dimuat
+
+        // Logika Tombol Slot Machine
+        btnShuffle.addEventListener('click', () => {
+            if (btnShuffle.disabled) return;
+            btnShuffle.disabled = true; // Kunci tombol agar tidak di-spam
+
+            // Hapus animasi lama, masukkan animasi slot berputar
+            verseDisplay.classList.remove('is-revealed');
+            verseDisplay.classList.add('is-spinning');
+
+            let spins = 0;
+            const maxSpins = 20; // 20 putaran teks
+            
+            // Interval ganti-ganti teks super cepat (50ms)
+            const spinInterval = setInterval(() => {
+                displayRandomVerse();
+                spins++;
+                
+                // Jika sudah cukup berputar
+                if (spins >= maxSpins) {
+                    clearInterval(spinInterval);
+                    displayRandomVerse(); // Hasil Final
+                    
+                    verseDisplay.classList.remove('is-spinning');
+                    
+                    // Trigger reflow (trik CSS agar animasi bisa diulang)
+                    void verseDisplay.offsetWidth; 
+                    
+                    // Munculkan hasil final dengan pantulan mulus
+                    verseDisplay.classList.add('is-revealed');
+                    
+                    // Buka kunci tombol setelah animasi reveal selesai
+                    setTimeout(() => { btnShuffle.disabled = false; }, 600);
+                }
+            }, 50); // Kecepatan putaran mesin
+        });
+
+
+        // Logika Interaksi Folder 2x Klik & Loading Screen
+        const loadingOverlay = document.getElementById('nav-loading');
+        const navBar = document.getElementById('nav-bar');
+
+        document.querySelectorAll('.folder-link').forEach(folder => {
+            folder.addEventListener('click', function(e) {
+                if (!this.classList.contains('active')) {
+                    e.preventDefault(); 
+                    document.querySelectorAll('.folder-link').forEach(f => f.classList.remove('active'));
+                    this.classList.add('active');
+                } else {
+                    if (e.target.classList.contains('btn-close')) return;
+                    
+                    e.preventDefault(); 
+                    const targetUrl = this.href;
+
+                    loadingOverlay.classList.add('active');
+
+                    const duration = Math.floor(Math.random() * (5000 - 3000 + 1)) + 3000;
+                    let startTime = null;
+
+                    function animateProgress(timestamp) {
+                        if (!startTime) startTime = timestamp;
+                        const progress = timestamp - startTime;
+                        const easeOutQuart = 1 - Math.pow(1 - (progress/duration), 4);
+                        const percentage = Math.min(easeOutQuart * 100, 100);
+                        
+                        navBar.style.width = percentage + '%';
+
+                        if (progress < duration) {
+                            window.requestAnimationFrame(animateProgress);
+                        } else {
+                            setTimeout(() => { window.location.href = targetUrl; }, 400);
+                        }
+                    }
+                    window.requestAnimationFrame(animateProgress);
+                }
+            });
+        });
+
+        document.querySelectorAll('.btn-close').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault(); e.stopPropagation(); 
+                this.closest('.folder-link').classList.remove('active');
+            });
+        });
+    </script>
+</body>
+</html>
