@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ayat Emas - Ensiklopedia Iman</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Montserrat:wght@300;500;700;italic&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --glass-bg: rgba(0, 0, 0, 0.45);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --text-color: #ffffff;
+            --accent: #ffcc00;
+        }
+
+        html, body { overflow-x: hidden; margin: 0; padding: 0; width: 100%; }
+
+        @keyframes blurIn {
+            from { filter: blur(30px); opacity: 0; transform: scale(1.03); }
+            to { filter: blur(0); opacity: 1; transform: scale(1); }
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+                        url('https://files.catbox.moe/zoym9j.jpg') center/cover fixed;
+            color: var(--text-color);
+            min-height: 100vh;
+            animation: blurIn 1.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+            padding-bottom: 60px;
+        }
+
+        * { box-sizing: border-box; }
+
+        /* Top Bar */
+        .top-bar {
+            position: sticky; top: 15px; margin: 15px 20px; padding: 12px 25px;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(20px);
+            border-radius: 50px; border: 1px solid var(--glass-border);
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .btn-back {
+            display: flex; justify-content: center; align-items: center;
+            width: 40px; height: 40px; border-radius: 50%;
+            background: rgba(255, 204, 0, 0.1); border: 1px solid var(--accent);
+            color: var(--accent); text-decoration: none;
+            transition: all 0.3s ease; z-index: 2;
+        }
+        .btn-back svg { width: 20px; height: 20px; }
+        .btn-back:hover { 
+            background: var(--accent); color: #000; 
+            transform: translateX(-5px) scale(1.05); 
+            box-shadow: 0 0 15px rgba(255, 204, 0, 0.5); 
+        }
+
+        #wib-clock {
+            position: absolute; left: 50%; transform: translateX(-50%);
+            font-size: 0.9rem; font-weight: 500; letter-spacing: 1px; z-index: 1;
+        }
+
+        .container { max-width: 1000px; margin: 40px auto; padding: 0 20px; text-align: center; }
+        
+        h1 { 
+            font-family: 'Cinzel', serif; font-size: clamp(1.8rem, 6vw, 2.5rem); 
+            letter-spacing: 3px; margin-bottom: 40px; color: var(--accent); 
+            text-shadow: 0 0 15px rgba(255,204,0,0.3);
+        }
+
+        /* --- GRID LAYOUT UNTUK FOLDER AYAT --- */
+        .verses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            text-align: left;
+        }
+
+        /* Desain Kartu (Folder) Ayat */
+        .verse-card {
+            background: var(--glass-bg); backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border); border-radius: 20px;
+            padding: 25px; cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            position: relative; overflow: hidden;
+            display: flex; flex-direction: column;
+        }
+
+        .verse-card:hover {
+            transform: translateY(-5px); background: rgba(255,255,255,0.08);
+            border-color: var(--accent); box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+        }
+
+        /* Sumber Ayat (Hanya ini yang tampil di awal) */
+        .verse-source {
+            font-family: 'Cinzel', serif; font-size: 1.2rem; color: var(--accent);
+            font-weight: 700; margin: 0; display: flex; justify-content: space-between; align-items: center;
+        }
+
+        .expand-icon {
+            font-size: 1.5rem; font-weight: 300; transition: transform 0.4s ease;
+        }
+        .verse-card.active .expand-icon { transform: rotate(45deg); color: #ff5555; }
+
+        /* Detail Area (Ayat, Pengertian, Penerapan) - Disembunyikan Awalnya */
+        .verse-details {
+            max-height: 0; opacity: 0; overflow: hidden;
+            transition: max-height 0.8s ease-in-out, opacity 0.6s ease-in-out 0.1s, margin-top 0.4s ease;
+        }
+
+        .verse-card.active .verse-details {
+            max-height: 1000px; /* Diperbesar agar teks panjang tetap muat */
+            opacity: 1; margin-top: 20px;
+        }
+
+        /* Teks Ayat Emas (Sekarang di dalam detail) */
+        .verse-quote {
+            font-size: 1.05rem; font-style: italic; line-height: 1.6; margin: 0 0 15px 0;
+            font-weight: 500; color: #fff; border-bottom: 1px dashed rgba(255,255,255,0.2);
+            padding-bottom: 15px; text-align: center;
+        }
+
+        .detail-section { margin-top: 15px; }
+        .detail-title {
+            font-family: 'Cinzel', serif; font-size: 0.9rem; color: var(--accent);
+            letter-spacing: 1px; margin-bottom: 5px;
+        }
+        .detail-text {
+            font-size: 0.9rem; line-height: 1.6; opacity: 0.9; margin: 0; font-weight: 300;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <a href="home.html" class="btn-back" title="Kembali ke Menu">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </a>
+        <div id="wib-clock">WIB: --:--:--</div>
+        <div style="width: 40px;"></div> 
+    </div>
+
+    <div class="container">
+        <h1>AYAT EMAS ALKITAB</h1>
+        
+        <div id="verses-container" class="verses-grid">
+            </div>
+    </div>
+
+    <script>
+        function updateClock() {
+            const time = new Date().toLocaleTimeString('id-ID', {timeZone:'Asia/Jakarta', hour12:false});
+            document.getElementById('wib-clock').textContent = `WIB: ${time}`;
+        }
+        setInterval(updateClock, 1000); updateClock();
+
+        // =========================================================================
+        // BATCH 1: 30 AYAT PERTAMA
+        // =========================================================================
+        const dataAyatEmas = [
+            { sumber: "Yohanes 3:16", teks: '"Karena begitu besar kasih Allah akan dunia ini, sehingga Ia telah mengaruniakan Anak-Nya yang tunggal, supaya setiap orang yang percaya kepada-Nya tidak binasa, melainkan beroleh hidup yang kekal."', pengertian: "Inti dari seluruh Injil. Merangkum besarnya kasih Bapa yang rela mengorbankan Yesus Kristus demi menyelamatkan umat manusia dari kebinasaan.", penerapan: "Ingatlah bahwa Anda sangat berharga. Ketika merasa diabaikan dunia, ayat ini menjadi bukti bahwa Pencipta semesta mengasihi Anda tanpa syarat." },
+            { sumber: "Filipi 4:13", teks: '"Segala perkara dapat kutanggung di dalam Dia yang memberi kekuatan kepadaku."', pengertian: "Dalam segala situasi—baik penderitaan, kekurangan, maupun kelimpahan—Kristus selalu memberikan kekuatan batin untuk bertahan.", penerapan: "Saat menghadapi ujian, masalah pekerjaan, atau tekanan hidup, berdoalah dan andalkan kekuatan Tuhan, bukan kekuatan sendiri." },
+            { sumber: "Yeremia 29:11", teks: '"Sebab Aku ini mengetahui rancangan-rancangan apa yang ada pada-Ku mengenai kamu... yaitu rancangan damai sejahtera dan bukan rancangan kecelakaan, untuk memberikan kepadamu hari depan yang penuh harapan."', pengertian: "Tuhan memastikan bahwa masa depan umat-Nya ada dalam kendali-Nya. Dia merancang akhir yang indah.", penerapan: "Ketika hidup terasa hancur atau impian gagal, jangan putus asa. Kegagalan saat ini adalah bagian dari rencana besar Tuhan." },
+            { sumber: "Amsal 3:5-6", teks: '"Percayalah kepada TUHAN dengan segenap hatimu, dan janganlah bersandar kepada pengertianmu sendiri. Akuilah Dia dalam segala lakumu, maka Ia akan meluruskan jalanmu."', pengertian: "Manusia memiliki nalar yang terbatas. Kita diajarkan untuk menyerahkan total jalan kita kepada kebijaksanaan Tuhan.", penerapan: "Saat mengambil keputusan besar, libatkan Tuhan. Mintalah damai sejahtera Roh Kudus untuk menuntun logika Anda." },
+            { sumber: "Matius 11:28", teks: '"Marilah kepada-Ku, semua yang letih lesu dan berbeban berat, Aku akan memberi kelegaan kepadamu."', pengertian: "Undangan Yesus bagi siapa saja yang lelah karena beban pekerjaan, pikiran, atau dosa, untuk menemukan kedamaian.", penerapan: "Jika sedang burnout, tutup mata, berdoalah, dan serahkan beban itu kepada Yesus. Temukan ketenangan di hadirat-Nya." },
+            { sumber: "Roma 8:28", teks: '"Kita tahu sekarang, bahwa Allah turut bekerja dalam segala sesuatu untuk mendatangkan kebaikan bagi mereka yang mengasihi Dia..."', pengertian: "Tuhan mampu merajut bahkan kejadian buruk sekalipun untuk pada akhirnya menghasilkan kebaikan bagi anak-anak-Nya.", penerapan: "Saat mengalami kejadian pahit, belajarlah melihat dari kacamata iman bahwa Tuhan punya maksud baik di baliknya." },
+            { sumber: "Mazmur 23:1", teks: '"TUHAN adalah gembalaku, takkan kekurangan aku."', pengertian: "Tuhan diumpamakan sebagai Gembala yang baik, yang bertanggung jawab penuh merawat dan melindungi domba-Nya.", penerapan: "Hapus rasa khawatir akan masa depan atau rezeki. Tuhan bertanggung jawab mencukupkan segala kebutuhanmu." },
+            { sumber: "Yosua 1:9", teks: '"Kuatkan dan teguhkanlah hatimu? Janganlah kecut dan tawar hati, sebab TUHAN, Allahmu, menyertai engkau, ke manapun engkau pergi."', pengertian: "Keberanian sejati adalah melangkah walau takut, karena tahu Tuhan menyertai di setiap langkah.", penerapan: "Gunakan ayat ini saat merasa gugup. Katakan pada diri sendiri: Tuhan menyertaiku ke manapun aku melangkah." },
+            { sumber: "Yesaya 41:10", teks: '"Janganlah takut, sebab Aku menyertai engkau... Aku akan memegang engkau dengan tangan kanan-Ku yang membawa kemenangan."', pengertian: "Janji perlindungan ilahi di mana Tuhan secara aktif 'memegang' dengan tangan kekuasaan-Nya.", penerapan: "Ketika merasa sendirian dikepung masalah, bayangkan tangan kanan Bapa di surga sedang menggenggam erat tangan Anda." },
+            { sumber: "Matius 6:33", teks: '"Tetapi carilah dahulu Kerajaan Allah dan kebenarannya, maka semuanya itu akan ditambahkan kepadamu."', pengertian: "Prioritaskan hubungan dengan Tuhan, maka kebutuhan duniawi akan Dia yang atur dan sediakan.", penerapan: "Jangan sampai kesibukan mencari harta membuat Anda mengabaikan ibadah dan waktu untuk membaca Firman Tuhan." },
+            { sumber: "Amsal 4:23", teks: '"Jagalah hatimu dengan segala kewaspadaan, karena dari situlah terpancar kehidupan."', pengertian: "Hati adalah pusat spiritual manusia. Apa yang kita izinkan masuk ke hati akan menentukan tindakan dan masa depan kita.", penerapan: "Saring informasi dan pergaulan yang Anda terima. Buang jauh-jauh rasa iri, dendam, dan pikiran negatif agar hidup lebih damai." },
+            { sumber: "Matius 5:16", teks: '"Demikianlah hendaknya terangmu bercahaya di depan orang, supaya mereka melihat perbuatanmu yang baik dan memuliakan Bapamu yang di sorga."', pengertian: "Orang Kristen dipanggil menjadi agen perubahan yang positif. Kebaikan yang kita lakukan harus mengarahkan orang lain untuk memuji Tuhan.", penerapan: "Lakukan tindakan baik sekecil apapun di tempat kerja atau sekolah tanpa mengharapkan pujian manusia." },
+            { sumber: "Roma 12:2", teks: '"Janganlah kamu menjadi serupa dengan dunia ini, tetapi berubahlah oleh pembaharuan budimu..."', pengertian: "Peringatan agar tidak ikut-ikutan tren atau standar moral dunia yang salah, melainkan terus diperbarui oleh Roh Kudus.", penerapan: "Berani tampil beda dalam hal integritas. Jika semua teman berbuat curang, tetaplah jujur demi mempertahankan kebenaran." },
+            { sumber: "Galatia 5:22-23", teks: '"Tetapi buah Roh ialah: kasih, sukacita, damai sejahtera, kesabaran, kemurahan, kebaikan, kesetiaan, kelemahlembutan, penguasaan diri."', pengertian: "Tanda nyata bahwa Roh Kudus berdiam di dalam kita adalah karakter kita yang makin menyerupai sifat-sifat Tuhan.", penerapan: "Jadikan sembilan buah Roh ini sebagai evaluasi harian. Apakah hari ini saya sudah cukup sabar? Apakah saya bisa menguasai diri saat marah?" },
+            { sumber: "Efesus 2:8", teks: '"Sebab karena kasih karunia kamu diselamatkan oleh iman; itu bukan hasil usahamu, tetapi pemberian Allah."', pengertian: "Keselamatan tidak bisa 'dibeli' dengan perbuatan baik atau amal amal. Keselamatan adalah murni hadiah gratis dari Tuhan melalui iman.", penerapan: "Lakukan perbuatan baik bukan untuk 'menyuap' surga, melainkan sebagai bentuk rasa syukur karena Anda sudah diselamatkan." },
+            { sumber: "Filipi 4:19", teks: '"Allahku akan memenuhi segala keperluanmu menurut kekayaan dan kemuliaan-Nya dalam Kristus Yesus."', pengertian: "Janji bahwa Tuhan tidak akan pernah membiarkan anak-Nya kekurangan dalam hal 'kebutuhan' esensial mereka.", penerapan: "Bedakan antara 'keinginan' dan 'kebutuhan'. Bersyukurlah atas apa yang ada karena Tuhan tahu persis apa yang Anda perlukan hari ini." },
+            { sumber: "Kolose 3:23", teks: '"Apapun juga yang kamu perbuat, perbuatlah dengan segenap hatimu seperti untuk Tuhan dan bukan untuk manusia."', pengertian: "Tuhan menghargai proses dan dedikasi. Pekerjaan apapun, jika dilakukan dengan jujur dan maksimal, adalah sebuah ibadah.", penerapan: "Kerjakan tugas kantor atau PR sekolah dengan tekun, meskipun atasan atau guru tidak melihat. Lakukan itu sebagai persembahan untuk Tuhan." },
+            { sumber: "1 Tesalonika 5:16-18", teks: '"Bersukacitalah senantiasa. Tetaplah berdoa. Mengucap syukurlah dalam segala hal..."', pengertian: "Syukur dan doa bukanlah kegiatan kondisional (saat senang saja), melainkan gaya hidup seorang mukmin dalam segala situasi.", penerapan: "Latih diri untuk mencari satu hal kecil yang bisa disyukuri setiap hari, bahkan di hari yang terasa paling buruk sekalipun." },
+            { sumber: "Ibrani 11:1", teks: '"Iman adalah dasar dari segala sesuatu yang kita harapkan dan bukti dari segala sesuatu yang tidak kita lihat."', pengertian: "Iman bukanlah harapan buta, melainkan kepastian spiritual dan kepercayaan penuh kepada janji Allah meskipun buktinya belum nampak secara fisik.", penerapan: "Saat mendoakan kesembuhan atau jalan keluar, bertindaklah seolah-olah jawaban itu sudah ada, karena Anda percaya penuh pada kuasa-Nya." },
+            { sumber: "Yakobus 1:5", teks: '"Tetapi apabila di antara kamu ada yang kekurangan hikmat, hendaklah ia memintakannya kepada Allah, yang memberikan kepada semua orang dengan murah hati..."', pengertian: "Tuhan sangat senang jika anak-anak-Nya meminta kebijaksanaan untuk membedakan yang baik dan buruk dalam menjalani hidup.", penerapan: "Sebelum mengambil keputusan krusial, berhentilah sejenak. Berdoa minta hikmat agar tidak salah mengambil langkah." },
+            { sumber: "1 Petrus 5:8", teks: '"Sadarlah dan berjaga-jagalah! Lawanmu, si Iblis, berjalan keliling sama seperti singa yang mengaum-aum dan mencari orang yang dapat ditelannya."', pengertian: "Peringatan bahwa kehidupan rohani adalah sebuah peperangan. Iblis selalu mencari celah kelengahan kita untuk menghancurkan iman.", penerapan: "Jangan lengah dengan dosa kecil (seperti berbohong atau iri hati). Segera bertobat dan berlindung pada firman Tuhan." },
+            { sumber: "1 Yohanes 4:19", teks: '"Kita mengasihi, karena Allah lebih dahulu mengasihi kita."', pengertian: "Sumber kemampuan kita untuk mencintai orang lain (bahkan musuh) bukanlah kekuatan kita sendiri, melainkan aliran cinta Bapa yang telah kita terima.", penerapan: "Jika sulit memaafkan seseorang, ingatlah seberapa banyak dosa Anda yang sudah dimaafkan dan dikasihi oleh Tuhan." },
+            { sumber: "Wahyu 3:20", teks: '"Lihat, Aku berdiri di muka pintu dan mengetok; jikalau ada orang yang mendengar suara-Ku dan membukakan pintu, Aku akan masuk mendapatkannya..."', pengertian: "Yesus adalah pria yang sangat *gentleman*. Dia menghargai kehendak bebas manusia dan hanya akan masuk memulihkan hati jika kita mengizinkan-Nya.", penerapan: "Buka 'pintu' hati Anda setiap hari melalui doa pribadi. Izinkan Dia masuk dan membersihkan setiap ruang gelap di hati Anda." },
+            { sumber: "Mazmur 119:105", teks: '"Firman-Mu itu pelita bagi kakiku dan terang bagi jalanku."', pengertian: "Di tengah dunia yang gelap dan penuh tipu daya, Alkitab adalah satu-satunya kompas mutlak yang menuntun arah kehidupan.", penerapan: "Jadikan membaca Alkitab sebagai rutinitas harian, bukan hanya saat hari Minggu, agar Anda tahu ke mana harus melangkah." },
+            { sumber: "Yesaya 53:5", teks: '"Tetapi dia tertikam oleh karena pemberontakan kita, dia diremukkan oleh karena kejahatan kita... dan oleh bilur-bilurnya kita menjadi sembuh."', pengertian: "Nubuatan ratusan tahun sebelum masehi tentang penyaliban Kristus, yang menanggung kutuk penyakit dan dosa umat manusia.", penerapan: "Saat sakit fisik atau batin, imani ayat ini. Penderitaan Kristus di kayu salib telah membayar lunas kesembuhan Anda." },
+            { sumber: "Ratapan 3:22-23", teks: '"Tak berkesudahan kasih setia TUHAN, tak habis-habisnya rahmat-Nya, selalu baru tiap pagi; besar kesetiaan-Mu!"', pengertian: "Tidak peduli seberapa buruk kegagalan kita kemarin, hari ini adalah kanvas baru di mana Tuhan memberikan belas kasihan-Nya yang segar.", penerapan: "Jangan terus menyesali kesalahan masa lalu. Bangunlah di pagi hari, minta ampun, dan mulailah lembaran baru bersama-Nya." },
+            { sumber: "Mikha 6:8", teks: '"Hai manusia, telah diberitahukan kepadamu apa yang baik. Dan apakah yang dituntut TUHAN dari padamu: selain berlaku adil, mencintai kesetiaan, dan hidup rendah hati di hadapan Allahmu?"', pengertian: "Tuhan tidak meminta ritual ibadah yang mewah, melainkan integritas moral, karakter yang penuh kasih, dan kerendahan hati.", penerapan: "Praktikkan keadilan di tempat kerja. Jangan korupsi waktu, berlakulah setia, dan hindari kesombongan dalam bertutur kata." },
+            { sumber: "Matius 6:34", teks: '"Sebab itu janganlah kamu kuatir akan hari besok, karena hari besok mempunyai kesusahannya sendiri. Kesusahan sehari cukuplah untuk sehari."', pengertian: "Kekhawatiran yang berlebihan tidak akan menambah panjang umur, malah merusak kesehatan jiwa. Fokuslah pada hari ini.", penerapan: "Hiduplah di momen saat ini (*present*). Jangan merusak sukacita hari ini dengan memikirkan masalah bulan depan yang belum tentu terjadi." },
+            { sumber: "Matius 28:19", teks: '"Karena itu pergilah, jadikanlah semua bangsa murid-Ku dan baptislah mereka dalam nama Bapa dan Anak dan Roh Kudus."', pengertian: "Amanat Agung (The Great Commission) yang diberikan Kristus agar setiap orang percaya aktif menyebarkan kabar baik keselamatan.", penerapan: "Tidak perlu menjadi Pendeta untuk menginjil. Jadilah teladan yang baik di pergaulan, sehingga orang bisa melihat sosok Kristus di dalam dirimu." },
+            { sumber: "Markus 10:27", teks: '"Bagi manusia hal itu tidak mungkin, tetapi bukan demikian bagi Allah. Sebab segala sesuatu adalah mungkin bagi Allah."', pengertian: "Tuhan sama sekali tidak terikat oleh hukum fisika, logika medis, maupun kemungkinan statistik dunia ini.", penerapan: "Jika dokter bilang tidak ada harapan, atau bank menolak memberi jalan keluar, percayalah bahwa Tuhan punya cara ajaib-Nya sendiri yang tak terduga." }            , // Koma penyambung dari ayat ke-30
+            { sumber: "Lukas 1:37", teks: '"Sebab bagi Allah tidak ada yang mustahil."', pengertian: "Pernyataan malaikat Gabriel kepada Maria ini menegaskan bahwa kekuasaan Tuhan melampaui segala hukum alam dan batasan logika manusia.", penerapan: "Saat menghadapi jalan buntu dalam keuangan atau penyakit, ingatlah bahwa 'mustahil' hanyalah kamus manusia, bukan kamus Tuhan." },
+            { sumber: "Lukas 6:31", teks: '"Dan sebagaimana kamu kehendaki supaya orang perbuat kepadamu, perbuatlah juga demikian kepada mereka."', pengertian: "Dikenal sebagai 'Aturan Emas' (The Golden Rule). Kekristenan menuntut tindakan proaktif dalam berbuat baik, bukan sekadar pasif menghindari kejahatan.", penerapan: "Jika Anda ingin dihormati dan didengarkan oleh teman atau rekan kerja, mulailah dengan menghormati dan mendengarkan mereka lebih dulu." },
+            { sumber: "Yohanes 1:12", teks: '"Tetapi semua orang yang menerima-Nya diberi-Nya kuasa supaya menjadi anak-anak Allah, yaitu mereka yang percaya dalam nama-Nya."', pengertian: "Status sebagai 'Anak Allah' bukanlah hak lahiriah manusia, melainkan anugerah yang diberikan secara khusus bagi mereka yang menerima Kristus.", penerapan: "Jangan biarkan dunia merendahkan identitas Anda. Anda adalah pangeran/putri dari Raja Semesta Alam; hiduplah dengan martabat tersebut." },
+            { sumber: "Yohanes 8:12", teks: '"Maka Yesus berkata pula kepada orang banyak, kata-Nya: Akulah terang dunia; barangsiapa mengikut Aku, ia tidak akan berjalan dalam kegelapan, melainkan ia akan mempunyai terang hidup."', pengertian: "Di tengah kebingungan moral dan dosa dunia yang gelap, Yesus adalah satu-satunya cahaya yang memberikan arah dan tujuan hidup yang pasti.", penerapan: "Saat bimbang menentukan pilihan sulit, mintalah petunjuk dari Yesus. Dia akan menerangi langkah Anda agar tidak salah mengambil keputusan." },
+            { sumber: "Yohanes 8:32", teks: '"Dan kamu akan mengetahui kebenaran, dan kebenaran itu akan memerdekakan kamu."', pengertian: "Kebenaran Firman Tuhan melepaskan manusia dari perbudakan dosa, kebohongan dunia, dan rasa bersalah yang mengikat masa lalu.", penerapan: "Berhentilah membohongi diri sendiri atau orang lain. Hidup dalam kejujuran dan kebenaran Tuhan akan membebaskan batin Anda dari rasa cemas." },
+            { sumber: "Yohanes 10:10", teks: '"Pencuri datang hanya untuk mencuri dan membunuh dan membinasakan; Aku datang, supaya mereka mempunyai hidup, dan mempunyainya dalam segala kelimpahan."', pengertian: "Kontras yang jelas antara niat iblis yang merusak dan niat Kristus yang memberikan kehidupan rohani yang penuh kedamaian dan tujuan.", penerapan: "Jika ada kebiasaan yang 'mencuri' kedamaian atau kesehatanmu (seperti kecanduan), tinggalkanlah. Pilihlah jalan Kristus yang memberi kelimpahan sukacita." },
+            { sumber: "Yohanes 11:25", teks: '"Jawab Yesus: Akulah kebangkitan dan hidup; barangsiapa percaya kepada-Ku, ia akan hidup walaupun ia sudah mati."', pengertian: "Kematian fisik bukanlah akhir bagi orang percaya, melainkan pintu gerbang menuju kehidupan kekal bersama Kristus.", penerapan: "Saat kehilangan orang yang dikasihi, biarlah ayat ini menjadi penghiburan. Perpisahan ini hanya sementara, ada kehidupan abadi yang menanti di surga." },
+            { sumber: "Yohanes 14:27", teks: '"Damai sejahtera Kutinggalkan bagimu. Damai sejahtera-Ku Kuberikan kepadamu, dan apa yang Kuberikan tidak seperti yang diberikan oleh dunia kepadamu. Janganlah gelisah dan gentar hatimu."', pengertian: "Damai dari dunia bergantung pada situasi (punya uang, sehat). Damai dari Yesus bersifat batiniah dan tetap kokoh meski ada badai.", penerapan: "Saat kepanikan melanda karena berita buruk, tarik napas panjang. Ingatlah bahwa Yesus telah menanamkan damai-Nya di dalam hatimu." },
+            { sumber: "Yohanes 15:5", teks: '"Akulah pokok anggur dan kamulah ranting-rantingnya. Barangsiapa tinggal di dalam Aku dan Aku di dalam dia, ia berbuah banyak, sebab di luar Aku kamu tidak dapat berbuat apa-apa."', pengertian: "Ranting yang terputus dari pohon akan mati. Begitu juga manusia rohani; kita hanya bisa menghasilkan kebaikan sejati jika terhubung dengan Kristus.", penerapan: "Jangan memulai hari dengan mengandalkan kehebatan sendiri. Awali dengan doa, karena 'di luar Tuhan' pencapaian kita menjadi sia-sia." },
+            { sumber: "Kisah Para Rasul 1:8", teks: '"Tetapi kamu akan menerima kuasa, kalau Roh Kudus turun ke atas kamu, dan kamu akan menjadi saksi-Ku di Yerusalem dan di seluruh Yudea dan Samaria dan sampai ke ujung bumi."', pengertian: "Tugas memberitakan Injil tidak dilakukan dengan kekuatan manusia, melainkan didorong oleh kuasa Roh Kudus yang memampukan kita.", penerapan: "Jangan malu bersaksi tentang kebaikan Tuhan di media sosial atau lingkungan kampus. Kuasa Roh Kudus akan membimbing perkataanmu." },
+            { sumber: "Kisah Para Rasul 4:12", teks: '"Dan keselamatan tidak ada di dalam siapapun juga selain di dalam Dia, sebab di bawah kolong langit ini tidak ada nama lain yang diberikan kepada manusia yang olehnya kita dapat diselamatkan."', pengertian: "Pernyataan eksklusif kekristenan bahwa hanya melalui pengorbanan Yesus Kristus keselamatan sejati dan pendamaian dengan Bapa dapat terjadi.", penerapan: "Pegang teguh imanmu kepada Yesus. Sebanyak apapun filsafat dunia yang kamu dengar, hanya nama-Nya yang bisa menyelamatkan jiwamu." },
+            { sumber: "Roma 1:16", teks: '"Sebab aku mempunyai keyakinan yang kokoh dalam Injil, karena Injil adalah kekuatan Allah yang menyelamatkan setiap orang yang percaya..."', pengertian: "Rasul Paulus tidak malu memberitakan Injil meski ditolak banyak orang, karena ia tahu bahwa di dalamnya terdapat kekuatan ilahi yang nyata.", penerapan: "Jadilah bangga sebagai orang Kristen. Jangan menyembunyikan identitas imanmu hanya karena takut tidak diterima oleh kelompok tertentu." },
+            { sumber: "Roma 3:23", teks: '"Karena semua orang telah berbuat dosa dan telah kehilangan kemuliaan Allah."', pengertian: "Fakta universal bahwa tidak ada satu manusia pun yang suci dengan sendirinya. Semua membutuhkan belas kasihan dan penebusan Tuhan.", penerapan: "Jangan pernah merasa lebih suci atau sombong saat melihat orang lain berbuat salah. Kita semua diselamatkan hanya karena anugerah." },
+            { sumber: "Roma 5:8", teks: '"Akan tetapi Allah menunjukkan kasih-Nya kepada kita, oleh karena Kristus telah mati untuk kita, ketika kita masih berdosa."', pengertian: "Tuhan tidak menunggu kita menjadi suci dan sempurna baru menyelamatkan kita. Dia mengasihi dan mati bagi kita saat kita masih dalam keadaan paling kotor.", penerapan: "Jika merasa diri terlalu kotor untuk berdoa, ingatlah ayat ini. Datanglah kepada-Nya dengan segala kehancuranmu, Dia sudah menerima tebusannya." },
+            { sumber: "Roma 6:23", teks: '"Sebab upah dosa ialah maut; tetapi karunia Allah ialah hidup yang kekal dalam Kristus Yesus, Tuhan kita."', pengertian: "Hukum ilahi yang adil mengharuskan dosa dihukum mati. Namun, kasih karunia Allah memberikan kehidupan kekal yang sudah dibayar oleh Yesus.", penerapan: "Jangan bermain-main dengan dosa sekecil apa pun, karena konsekuensinya adalah kebinasaan. Syukuri hidup barumu dan jauhi hal-hal jahat." },
+            { sumber: "Roma 10:9", teks: '"Sebab jika kamu mengaku dengan mulutmu, bahwa Yesus adalah Tuhan, dan percaya dalam hatimu, bahwa Allah telah membangkitkan Dia dari antara orang mati, maka kamu akan diselamatkan."', pengertian: "Formula keselamatan yang sangat jelas: pengakuan verbal yang selaras dengan keyakinan hati akan ketuhanan dan kebangkitan Kristus.", penerapan: "Iman bukan hanya soal pikiran, tapi harus diwujudkan dalam pengakuan nyata dan tindakan hidup sehari-hari yang mencerminkan ketuhanan-Nya." },
+            { sumber: "Roma 12:1", teks: '"Karena itu, saudara-saudara, demi kemurahan Allah aku menasihatkan kamu, supaya kamu mempersembahkan tubuhmu sebagai persembahan yang hidup, yang kudus dan yang berkenan kepada Allah: itu adalah ibadahmu yang sejati."', pengertian: "Ibadah yang sesungguhnya bukanlah ritual di gedung gereja, melainkan memberikan seluruh hidup, pikiran, dan tindakan kita sehari-hari untuk kemuliaan-Nya.", penerapan: "Gunakan tubuhmu dengan hormat. Jauhi hal-hal yang merusak seperti narkoba atau pergaulan bebas, karena tubuhmu adalah bait-Nya." },
+            { sumber: "Roma 12:12", teks: '"Bersukacitalah dalam pengharapan, sabarlah dalam kesesakan, dan bertekunlah dalam doa!"', pengertian: "Tiga kunci pertahanan spiritual: memiliki harapan yang membawa sukacita, memiliki kesabaran saat badai datang, dan tidak pernah putus berdoa.", penerapan: "Jadikan ayat ini motto saat sedang skripsi, mencari kerja, atau membangun rumah tangga. Sabar, terus berdoa, dan tetap tersenyum dalam harapan." },
+            { sumber: "Roma 15:13", teks: '"Semoga Allah, sumber pengharapan, memenuhi kamu dengan segala sukacita dan damai sejahtera dalam iman kamu, supaya oleh kekuatan Roh Kudus kamu berlimpah-limpah dalam pengharapan."', pengertian: "Doa berkat agar umat dipenuhi oleh damai dan sukacita ilahi, yang memampukan mereka melihat harapan meski logika dunia mengatakan sebaliknya.", penerapan: "Tutup harimu dengan membaca ayat ini. Biarkan damai sejahtera dari Roh Kudus membersihkan semua kekhawatiran yang menumpuk hari ini." },
+            { sumber: "1 Korintus 1:18", teks: '"Sebab pemberitaan tentang salib memang adalah kebodohan bagi mereka yang akan binasa, tetapi bagi kita yang diselamatkan pemberitaan itu adalah kekuatan Allah."', pengertian: "Bagi dunia, seorang Juruselamat yang mati disalib tampak lemah dan konyol. Namun bagi kita, justru di sanalah letak kekuatan terbesar yang mengalahkan maut.", penerapan: "Jangan patah semangat jika teman-temanmu mengejek imanmu. Salib adalah bukti nyata cinta dan kekuatan Tuhan bagi keselamatanmu." },
+            { sumber: "1 Korintus 3:16", teks: '"Tidak tahukah kamu, bahwa kamu adalah bait Allah dan bahwa Roh Allah diam di dalam kamu?"', pengertian: "Manusia rohani adalah tempat kediaman kudus bagi Roh Tuhan, lebih dari sekadar bangunan fisik buatan manusia.", penerapan: "Hargailah dirimu sendiri. Jika Roh Kudus tinggal di dalammu, maka isi pikiranmu dengan hal-hal yang pantas untuk Dia tempati." },
+            { sumber: "1 Korintus 10:31", teks: '"Jika engkau makan atau jika engkau minum, atau jika engkau melakukan sesuatu yang lain, lakukanlah semuanya itu untuk kemuliaan Allah."', pengertian: "Tidak ada dikotomi antara hal rohani dan duniawi. Bahkan hal sepele seperti makan dan minum harus mencerminkan rasa syukur dan hormat kepada Pencipta.", penerapan: "Saat bekerja, memasak, atau berolahraga, lakukan dengan niat yang murni dan tulus, karena itulah bentuk pujian nyata bagi Tuhan." },
+            { sumber: "1 Korintus 15:33", teks: '"Janganlah kamu sesat: Pergaulan yang buruk merusakkan kebiasaan yang baik."', pengertian: "Sebuah peringatan praktis. Karakter kita sangat dipengaruhi oleh siapa kita menghabiskan waktu, karena sifat buruk lebih mudah menular daripada sifat baik.", penerapan: "Boleh berteman dengan siapa saja, namun berhati-hatilah memilih sahabat karib (inner circle). Pilihlah mereka yang membawamu lebih dekat kepada Tuhan." },
+            { sumber: "1 Korintus 15:58", teks: '"Karena itu, saudara-saudaraku yang kekasih, berdirilah teguh, jangan goyah, dan giatlah selalu dalam pekerjaan Tuhan! Sebab kamu tahu, bahwa dalam persekutuan dengan Tuhan jerih payahmu tidak sia-sia."', pengertian: "Dorongan agar tidak menyerah melayani Tuhan. Meski manusia sering tidak menghargai usaha kita, Tuhan memperhitungkan setiap tetes keringat kita.", penerapan: "Jika lelah menjadi pelayan gereja atau berbuat baik tapi tidak dihargai, ingatlah: Tuhan adalah mandor yang mencatat semua jerih payahmu." },
+            { sumber: "2 Korintus 4:16", teks: '"Sebab itu kami tidak tawar hati, tetapi meskipun manusia lahiriah kami semakin merosot, namun manusia batiniah kami dibaharui dari sehari ke sehari."', pengertian: "Penuaan, penyakit, atau kelemahan fisik adalah hal alami, namun secara roh, orang percaya justru makin bertumbuh segar, kuat, dan dewasa setiap hari.", penerapan: "Jangan terlalu cemas akan usia atau kerutan di wajah. Fokuslah pada pertumbuhan kedewasaan karakter dan imanmu di hadapan Tuhan." },
+            { sumber: "2 Korintus 5:7", teks: '"Sebab hidup kami ini adalah hidup karena percaya, bukan karena melihat."', pengertian: "Esensi dari iman Kristen. Kita tidak bertindak berdasarkan apa yang terlihat oleh mata jasmani atau hitungan matematis, melainkan pada janji Tuhan.", penerapan: "Saat saldo bank menipis atau peluang terlihat mustahil, tetaplah berjalan maju dengan iman bahwa Tuhan akan membuka jalan." },
+            { sumber: "2 Korintus 5:17", teks: '"Jadi siapa yang ada di dalam Kristus, ia adalah ciptaan baru: yang lama sudah berlalu, sesungguhnya yang baru sudah datang."', pengertian: "Pertobatan di dalam Kristus mereset hidup kita. Label dosa dan identitas masa lalu dihapus lunas, diganti dengan lembaran yang sepenuhnya baru.", penerapan: "Berhentilah menghukum dirimu atas dosa masa lalu yang sudah diampuni Tuhan. Angkat kepalamu, engkau sudah menjadi manusia baru." },
+            { sumber: "2 Korintus 9:7", teks: '"Hendaklah masing-masing memberikan menurut kerelaan hatinya, jangan dengan sedih hati atau karena paksaan, sebab Allah mengasihi orang yang memberi dengan sukacita."', pengertian: "Tuhan tidak melihat nominal persembahan, melainkan motivasi di baliknya. Memberi harus lahir dari rasa syukur, bukan kewajiban yang memberatkan.", penerapan: "Saat memberi sumbangan atau persembahan, lakukan dengan senyum tulus. Jika hatimu terpaksa, lebih baik berdiam diri dahulu dan doakan hatimu." },
+            { sumber: "2 Korintus 12:9", teks: '"Tetapi jawab Tuhan kepadaku: Cukuplah kasih karunia-Ku bagimu, sebab justru dalam kelemahanlah kuasa-Ku menjadi sempurna."', pengertian: "Paulus memiliki 'duri dalam daging' (kelemahan/penyakit). Tuhan tidak menyembuhkannya, namun berjanji bahwa kelemahan Paulus adalah ruang bagi Tuhan untuk menunjukkan kehebatan-Nya.", penerapan: "Berhentilah membenci kekurangan fisik atau keterbatasanmu. Serahkan itu pada Tuhan, dan Dia akan memakainya untuk kemuliaan-Nya." },
+            { sumber: "Galatia 2:20", teks: '"Namun aku hidup, tetapi bukan lagi aku sendiri yang hidup, melainkan Kristus yang hidup di dalam aku..."', pengertian: "Kematian ego. Keinginan daging dan keegoisan Paulus telah mati disalibkan, dan kini hidupnya dikendalikan sepenuhnya oleh keinginan dan pikiran Kristus.", penerapan: "Sebelum marah-marah di jalan atau membalas dendam, bertanyalah: 'Jika Kristus yang hidup di dalamku, apakah Dia akan melakukan ini?'" },
+            { sumber: "Galatia 6:7", teks: '"Jangan sesat! Allah tidak membiarkan diri-Nya dipermainkan. Karena apa yang ditabur orang, itu juga yang akan dituainya."', pengertian: "Prinsip hukum tabur tuai. Tuhan itu adil; kita tidak bisa mengharapkan kebaikan jika kita terus-menerus menabur kejahatan, fitnah, atau kemalasan.", penerapan: "Jika kamu ingin lulus ujian, taburlah waktu untuk belajar. Jika kamu ingin dipercaya, taburlah kejujuran." },
+            { sumber: "Galatia 6:9", teks: '"Janganlah kita jemu-jemu berbuat baik, karena apabila sudah datang waktunya, kita akan menuai, jika kita tidak menjadi lemah."', pengertian: "Berbuat baik seringkali melelahkan dan sering tidak dibalas kebaikan. Namun firman ini menjanjikan bahwa panen kebaikan pasti tiba di waktu yang tepat.", penerapan: "Teruslah menolong orang lain meski mereka tidak berterima kasih. Kamu tidak mencari pujian mereka, melainkan menanti tuaian dari Tuhan." },
+            { sumber: "Efesus 2:10", teks: '"Karena kita ini buatan Allah, diciptakan dalam Kristus Yesus untuk melakukan pekerjaan baik, yang dipersiapkan Allah sebelumnya. Ia mau, supaya kita hidup di dalamnya."', pengertian: "Manusia bukanlah hasil kebetulan, melainkan mahakarya (*masterpiece*) Allah yang dirancang secara spesifik dengan misi dan tujuan kebaikan yang sudah Dia siapkan.", penerapan: "Jangan pernah merasa bahwa hidupmu sia-sia. Kamu diciptakan dengan tangan Tuhan untuk sebuah tugas besar yang hanya bisa kamu selesaikan." },
+            { sumber: "Efesus 4:26", teks: '"Apabila kamu menjadi marah, janganlah kamu berbuat dosa: janganlah matahari terbenam, sebelum padam amarahmu."', pengertian: "Marah adalah emosi wajar manusia, namun jangan biarkan kemarahan itu berlarut-larut hingga menjadi dendam yang membuahkan dosa.", penerapan: "Selesaikan konflik dengan pasangan, keluarga, atau teman sebelum pergi tidur. Tidur dengan hati penuh damai akan menjauhkanmu dari rancangan iblis." },
+            { sumber: "Efesus 4:32", teks: '"Tetapi hendaklah kamu ramah seorang terhadap yang lain, penuh kasih mesra dan saling mengampuni, sebagaimana Allah di dalam Kristus telah mengampuni kamu."', pengertian: "Standar pengampunan orang Kristen bukanlah kelayakan orang yang bersalah, melainkan berkaca pada betapa besarnya Tuhan telah mengampuni kita.", penerapan: "Maafkan teman yang menyakiti hatimu. Bukan karena dia pantas dimaafkan, melainkan karena kamu juga sudah dimaafkan lebih dulu oleh Yesus." }            , // Koma penyambung dari ayat ke-65
+            { sumber: "Efesus 6:10", teks: '"Akhirnya, hendaklah kamu kuat di dalam Tuhan, di dalam kekuatan kuasa-Nya."', pengertian: "Kekuatan sejati seorang Kristen tidak berasal dari otot atau kepintarannya, melainkan dari kedekatannya dengan sumber kuasa itu sendiri, yaitu Tuhan.", penerapan: "Saat merasa lelah secara mental, jangan hanya mengandalkan motivasi duniawi. Berdoalah dan tarik kekuatan dari Roh Kudus." },
+            { sumber: "Efesus 6:11", teks: '"Kenakanlah seluruh perlengkapan senjata Allah, supaya kamu dapat bertahan melawan tipu muslihat Iblis."', pengertian: "Hidup ini adalah medan perang rohani. Iblis tidak menyerang dengan pedang fisik, melainkan dengan kebohongan, keraguan, dan godaan.", penerapan: "Lengkapi dirimu setiap pagi dengan kebenaran (baca Alkitab), iman, dan doa agar tidak mudah jatuh dalam dosa atau penipuan." },
+            { sumber: "Filipi 1:6", teks: '"Akan hal ini aku yakin sepenuhnya, yaitu Ia, yang memulai pekerjaan yang baik di antara kamu, akan meneruskannya sampai pada akhirnya pada hari Kristus Yesus."', pengertian: "Tuhan bukanlah pembuat proyek yang suka setengah jalan. Jika Dia sudah menyelamatkan dan memanggilmu, Dia pasti akan menyempurnakan karaktermu.", penerapan: "Jangan frustrasi jika kamu merasa masih sering berbuat salah. Tuhan sedang memprosesmu, dan Dia belum selesai denganmu." },
+            { sumber: "Filipi 2:3", teks: '"Dengan tidak mencari kepentingan sendiri atau puji-pujian yang sia-sia. Sebaliknya hendaklah dengan rendah hati yang seorang menganggap yang lain lebih utama dari pada dirinya sendiri."', pengertian: "Kunci dari keharmonisan adalah membunuh ego. Kesombongan menghancurkan hubungan, sedangkan kerendahan hati membangunnya.", penerapan: "Di tempat kerja atau sekolah, jangan selalu ingin tampil paling hebat. Belajarlah mengapresiasi dan menaikkan nama temanmu juga." },
+            { sumber: "Filipi 4:4", teks: '"Bersukacitalah senantiasa dalam Tuhan! Sekali lagi kukatakan: Bersukacitalah!"', pengertian: "Sukacita Kristen bukanlah sekadar emosi senang karena keadaan sedang baik, melainkan keputusan iman untuk tetap bersyukur karena Tuhan itu baik.", penerapan: "Bahkan saat dompet menipis atau rencana gagal, pilihlah untuk tetap tersenyum dan bersyukur atas napas kehidupan yang masih Tuhan beri." },
+            { sumber: "Filipi 4:6", teks: '"Janganlah hendaknya kamu kuatir tentang apapun juga, tetapi nyatakanlah dalam segala hal keinginanmu kepada Allah dalam doa dan permohonan dengan ucapan syukur."', pengertian: "Kekhawatiran adalah tanda kurangnya kepercayaan. Obat dari kekhawatiran adalah doa yang diiringi dengan ucapan syukur.", penerapan: "Setiap kali pikiran negatif atau rasa cemas menyerang, langsung ubah pikiran itu menjadi doa. Berbicaralah pada Bapa di surga." },
+            { sumber: "Filipi 4:7", teks: '"Damai sejahtera Allah, yang melampaui segala akal, akan memelihara hati dan pikiranmu dalam Kristus Yesus."', pengertian: "Hasil dari menyerahkan kekhawatiran kepada Tuhan (ayat 6) adalah damai yang tidak masuk akal (logika manusia mungkin panik, tapi hati tetap tenang).", penerapan: "Biarkan damai Tuhan menjadi 'satpam' bagi pikiranmu. Jika suatu keputusan membuatmu gelisah terus-menerus, berdoalah lagi." },
+            { sumber: "Filipi 4:8", teks: '"Jadi akhirnya, saudara-saudara, semua yang benar, semua yang mulia, semua yang adil, semua yang suci, semua yang manis, semua yang sedap didengar, semua yang disebut kebajikan dan patut dipuji, pikirkanlah semuanya itu."', pengertian: "Pikiran kita adalah medan tempur. Apa yang kita pikirkan akan membentuk siapa kita. Tuhan ingin kita mengisi otak kita dengan hal-hal positif dan suci.", penerapan: "Saring tontonan, musik, dan obrolanmu. Jangan buang waktu memikirkan gosip atau hal-hal kotor yang merusak jiwa." },
+            { sumber: "Kolose 3:2", teks: '"Pikirkanlah perkara yang di atas, bukan yang di bumi."', pengertian: "Orang percaya memiliki kewarganegaraan ganda (bumi dan surga). Jangan sampai harta, tahta, dan masalah duniawi membuat kita lupa akan tujuan abadi.", penerapan: "Saat terlalu stres mengejar karir atau kekayaan, ingatlah bahwa semua itu akan ditinggalkan. Fokuslah juga pada harta surgawimu." },
+            { sumber: "Kolose 3:13", teks: '"Sabarlah kamu seorang terhadap yang lain, dan ampunilah seorang akan yang lain apabila yang seorang menaruh dendam terhadap yang lain, sama seperti Tuhan telah mengampuni kamu, kamu perbuat jugalah demikian."', pengertian: "Pengampunan adalah karakter utama Kristus. Kita tidak bisa menahan maaf untuk orang lain sementara kita menuntut pengampunan dari Tuhan.", penerapan: "Lepaskan pengampunan hari ini juga untuk orang yang menyakitimu. Mengampuni bukan berarti menyetujui kesalahannya, melainkan membebaskan dirimu sendiri." },
+            { sumber: "1 Tesalonika 4:3", teks: '"Karena inilah kehendak Allah: pengudusanmu, yaitu supaya kamu menjauhi percabulan."', pengertian: "Tuhan sangat peduli dengan kekudusan hidup kita, termasuk dalam hal seksualitas, agar tubuh kita tetap menjadi bait yang kudus.", penerapan: "Jaga kekudusan dalam berpacaran dan bergaul. Jauhi pornografi dan hal-hal yang dapat memicu hawa nafsu yang tidak kudus." },
+            { sumber: "1 Tesalonika 5:11", teks: '"Karena itu nasihatilah seorang akan yang lain dan saling membangunlah kamu seperti yang memang kamu lakukan."', pengertian: "Gereja atau komunitas rohani bukanlah tempat untuk saling menjatuhkan atau menghakimi, melainkan rumah sakit spiritual untuk saling memulihkan.", penerapan: "Jadilah penyemangat bagi temanmu yang sedang *down*. Satu kalimat positif darimu bisa menyelamatkan hari atau bahkan hidup seseorang." },
+            { sumber: "2 Tesalonika 3:3", teks: '"Tetapi Tuhan adalah setia. Ia akan menguatkan hatimu dan memelihara kamu terhadap yang jahat."', pengertian: "Meski dunia penuh dengan niat jahat dan roh-roh gelap, kesetiaan Tuhan bertindak sebagai perisai perlindungan yang absolut bagi anak-anak-Nya.", penerapan: "Berangkatlah beraktivitas dengan tenang. Tuhan Yesus memagari kamu dan keluargamu dari bahaya yang terlihat maupun tidak terlihat." },
+            { sumber: "1 Timotius 4:12", teks: '"Jangan seorangpun menganggap engkau rendah karena engkau muda. Jadilah teladan bagi orang-orang percaya, dalam perkataanmu, dalam tingkah lakumu, dalam kasihmu, dalam kesetiaanmu dan dalam kesucianmu."', pengertian: "Kedewasaan rohani tidak diukur dari kerutan di wajah atau umur, melainkan dari karakter dan integritas hidup sehari-hari.", penerapan: "Buktikan kepada dunia bahwa anak muda juga bisa hidup kudus, sopan santun, dan menjadi berkat bagi orang tua serta lingkungan." },
+            { sumber: "1 Timotius 6:10", teks: '"Karena akar segala kejahatan ialah cinta uang. Sebab oleh memburu uanglah beberapa orang telah menyimpang dari iman dan menyiksa dirinya dengan berbagai-bagai duka."', pengertian: "Uang itu sendiri tidak netral, namun *cinta* akan uang (keserakahan) akan membutakan mata rohani dan menghancurkan prinsip kebenaran.", penerapan: "Bekerjalah dengan rajin, tapi jangan jadikan uang sebagai 'tuhan' hidupmu. Bersyukurlah dengan apa yang ada agar hatimu damai." },
+            { sumber: "2 Timotius 3:16", teks: '"Segala tulisan yang diilhamkan Allah memang bermanfaat untuk mengajar, untuk menyatakan kesalahan, untuk memperbaiki kelakuan dan untuk mendidik orang dalam kebenaran."', pengertian: "Alkitab bukanlah sekadar buku sejarah kuno, melainkan firman Tuhan yang hidup, bernapas, dan relevan untuk memperbaiki setiap area kehidupan kita.", penerapan: "Jadikan Alkitab sebagai cermin. Saat membaca, biarkan firman itu menegur kesalahanmu dan membimbingmu ke arah yang lebih baik." },
+            { sumber: "2 Timotius 4:7", teks: '"Aku telah mengakhiri pertandingan yang baik, aku telah mencapai garis akhir dan aku telah memelihara iman."', pengertian: "Pernyataan kemenangan Paulus di akhir hidupnya. Hidup Kristen adalah maraton, bukan lari sprint, yang membutuhkan ketekunan untuk memelihara iman hingga garis *finish*.", penerapan: "Tetaplah setia kepada Yesus meskipun perjalanan hidup terasa berat. Pastikan kelak kamu bisa mengucapkan kalimat ini saat kembali ke surga." },
+            { sumber: "Titus 3:5", teks: '"Pada waktu itu Dia telah menyelamatkan kita, bukan karena perbuatan baik yang telah kita lakukan, tetapi karena rahmat-Nya oleh permandian kelahiran kembali dan oleh pembaharuan yang dikerjakan oleh Roh Kudus."', pengertian: "Menegaskan kembali bahwa kebaikan kita seperti kain kotor di hadapan Tuhan. Keselamatan mutlak karena rahmat pembersihan dari Roh Kudus.", penerapan: "Buang segala kesombongan agamawi. Kamu diselamatkan bukan karena kamu hebat, melainkan karena Tuhan itu sangat baik." },
+            { sumber: "Ibrani 4:12", teks: '"Sebab firman Allah hidup dan kuat dan lebih tajam dari pada pedang bermata dua manapun; ia menusuk amat dalam sampai memisahkan jiwa dan roh, sendi-sendi dan sumsum; ia sanggup membedakan pertimbangan dan pikiran hati kita."', pengertian: "Firman Tuhan memiliki kekuatan bedah spiritual. Ia bisa membongkar niat tersembunyi dan kepalsuan dalam hati kita yang terdalam.", penerapan: "Jangan baca Alkitab hanya sebagai formalitas. Izinkan firman itu 'membedah' hatimu, membuang ego, dan menanamkan benih kebenaran." },
+            { sumber: "Ibrani 10:24", teks: '"Dan marilah kita saling memperhatikan supaya kita saling mendorong dalam kasih dan dalam pekerjaan baik."', pengertian: "Kekristenan tidak dirancang untuk dijalani sendirian secara *solo*. Kita butuh saudara seiman untuk memotivasi agar tidak menjadi suam-suam kuku.", penerapan: "Aktiflah di komunitas sel atau persekutuan gereja. Jadilah *support system* bagi orang lain, dan izinkan mereka menegurmu saat kamu salah." },
+            { sumber: "Ibrani 12:2", teks: '"Marilah kita melakukannya dengan mata yang tertuju kepada Yesus, yang memimpin kita dalam iman, dan yang membawa iman kita itu kepada kesempurnaan..."', pengertian: "Di tengah perlombaan hidup yang penuh rintangan, satu-satunya cara agar tidak jatuh adalah dengan menjaga fokus mata rohani kita hanya kepada Kristus.", penerapan: "Jangan fokus pada besarnya masalahmu atau kelemahan orang di sekitarmu. Fokuslah pada kebesaran Yesus yang memegang kendali hidupmu." },
+            { sumber: "Ibrani 13:5", teks: '"Janganlah kamu menjadi hamba uang dan cukupkanlah dirimu dengan apa yang ada padamu. Karena Allah telah berfirman: Aku sekali-kali tidak akan membiarkan engkau dan Aku sekali-kali tidak akan meninggalkan engkau."', pengertian: "Obat dari keserakahan adalah rasa cukup (*contentment*), yang lahir dari keyakinan bahwa Kehadiran Tuhan jauh lebih berharga dari saldo bank.", penerapan: "Berhentilah membandingkan gaya hidupmu dengan orang di media sosial. Bersyukurlah, karena Tuhan selalu ada bersamamu di setiap keadaan." },
+            { sumber: "Yakobus 1:2", teks: '"Saudara-saudaraku, anggaplah sebagai suatu kebahagiaan, apabila kamu jatuh ke dalam berbagai-bagai pencobaan."', pengertian: "Paradoks iman. Ujian dan cobaan bukanlah hukuman, melainkan alat *fitness* spiritual yang digunakan Tuhan untuk membentuk ketekunan dan karakter kita.", penerapan: "Saat beban pekerjaan menumpuk atau ada masalah berat, ubah *mindset*-mu: Ini adalah cara Tuhan melatih otot imanku agar makin kuat." },
+            { sumber: "Yakobus 1:19", teks: '"Hai saudara-saudaraku yang kekasih, ingatlah hal ini: setiap orang hendaklah cepat untuk mendengar, tetapi lambat untuk berkata-kata, dan juga lambat untuk marah."', pengertian: "Prinsip komunikasi surgawi. Tuhan memberi kita dua telinga dan satu mulut agar kita lebih banyak mendengarkan daripada menghakimi.", penerapan: "Saat berdebat, jangan langsung memotong pembicaraan. Dengarkan baik-baik, tahan emosimu, dan jawablah dengan kelembutan." },
+            { sumber: "Yakobus 4:7", teks: '"Karena itu tunduklah kepada Allah, dan lawanlah Iblis, maka ia akan lari dari padamu!"', pengertian: "Syarat untuk mengalahkan iblis bukan dengan kekuatan mistis, melainkan dengan menundukkan ego kita di bawah otoritas Tuhan terlebih dahulu.", penerapan: "Saat godaan dosa datang, serahkan dirimu pada Tuhan lewat doa, lalu tolak godaan itu dengan tegas. Iblis tidak punya kuasa atas anak Allah." },
+            { sumber: "1 Petrus 2:9", teks: '"Tetapi kamulah bangsa yang terpilih, imamat yang rajani, bangsa yang kudus, umat kepunyaan Allah sendiri, supaya kamu memberitakan perbuatan-perbuatan yang besar dari Dia..."', pengertian: "Identitas baru kita di dalam Kristus sangatlah agung. Kita adalah bangsawan surga (imamat rajani) yang ditugaskan menjadi duta besar-Nya di bumi.", penerapan: "Hiduplah dengan standar kerajaan Surga. Berpakaian sopan, berbicara santun, dan tunjukkan kelasmu sebagai umat kepunyaan Tuhan." },
+            { sumber: "1 Petrus 3:15", teks: '"Tetapi kuduskanlah Kristus di dalam hatimu sebagai Tuhan! Dan siap sedialah pada segala waktu untuk memberi pertanggungan jawab kepada tiap-tiap orang yang meminta nanggungan dari kamu tentang pengharapan yang ada padamu, tetapi haruslah dengan lemah lembut dan hormat."', pengertian: "Kita harus selalu siap menjelaskan iman kita kepada orang yang bertanya, namun cara menyampaikannya harus penuh kasih, bukan dengan debat kusir yang arogan.", penerapan: "Pelajari isi Alkitab agar kamu bisa menjawab keraguan orang lain. Namun ingat, menangkan hati mereka dengan kasih, bukan sekadar memenangkan argumen." },
+            { sumber: "1 Petrus 5:6", teks: '"Karena itu rendahkanlah dirimu di bawah tangan Tuhan yang kuat, supaya kamu ditinggikan-Nya pada waktunya."', pengertian: "Kesombongan mendahului kehancuran. Jalan menuju peninggian dari Tuhan adalah dengan berlutut dalam kerendahan hati dan mengakui bahwa kita bergantung pada-Nya.", penerapan: "Jangan memaksakan ambisimu dengan cara curang. Tetaplah rendah hati, layani Tuhan dengan setia, dan biarkan Dia yang mengangkatmu di waktu-Nya yang sempurna." },
+            { sumber: "1 Yohanes 1:9", teks: '"Jika kita mengaku dosa kita, maka Ia adalah setia dan adil, sehingga Ia akan mengampuni segala dosa kita dan menyucikan kita dari segala kejahatan."', pengertian: "Tuhan tidak pernah menutup pintu maaf bagi hati yang hancur. Pengakuan yang tulus adalah kunci untuk membuka keran pembersihan total dari Tuhan.", penerapan: "Jangan sembunyikan dosa kecil sekalipun. Akuilah di hadapan Tuhan setiap malam, dan rasakan kelegaan karena Dia telah menghapusnya hingga bersih." },
+            { sumber: "1 Yohanes 3:18", teks: '"Anak-anakku, marilah kita mengasihi bukan dengan perkataan atau dengan lidah, tetapi dengan perbuatan dan dalam kebenaran."', pengertian: "Kasih (*Agape*) bukanlah sekadar perasaan romantis atau kata-kata manis di bibir, melainkan tindakan pengorbanan nyata yang sejalan dengan kebenaran.", penerapan: "Daripada hanya bilang 'Aku doakan ya', cobalah ambil tindakan nyata: bawakan makanan untuk teman yang sakit, atau bantu ringankan pekerjaannya." },
+            { sumber: "1 Yohanes 4:8", teks: '"Barangsiapa tidak mengasihi, ia tidak mengenal Allah, sebab Allah adalah kasih."', pengertian: "Bukti mutlak bahwa seseorang sungguh mengenal Tuhan adalah adanya kasih dalam dirinya. Tanpa kasih, semua atribut keagamaan menjadi nol besar.", penerapan: "Periksa hatimu: apakah ada kebencian atau rasisme terhadap kelompok tertentu? Jika ada, berdoalah agar Tuhan menggantinya dengan kasih-Nya." },
+            { sumber: "1 Yohanes 5:14", teks: '"Dan inilah keberanian percaya kita kepada-Nya, yaitu bahwa Ia mengabulkan doa kita, jikalau kita meminta sesuatu kepada-Nya menurut kehendak-Nya."', pengertian: "Tuhan bukanlah jin lampu ajaib yang menuruti semua keinginan egois kita. Doa yang dijawab adalah doa yang selaras dengan rencana dan kehendak-Nya yang sempurna.", penerapan: "Dalam setiap doamu, tambahkan kalimat: 'Bukan kehendakku yang terjadi, melainkan kehendak-Mu, Bapa.' Ini menunjukkan kedewasaan imanmu." },
+            { sumber: "Wahyu 21:4", teks: '"Dan Ia akan menghapus segala air mata dari mata mereka, dan maut tidak akan ada lagi; tidak akan ada lagi perkabungan, atau ratap tangis, atau dukacita, sebab segala sesuatu yang lama itu telah berlalu."', pengertian: "Janji surga yang indah. Semua penderitaan, penyakit kanker, kesedihan, dan kematian di bumi ini ada batas kadaluwarsanya dan akan dihancurkan total oleh Tuhan.", penerapan: "Saat menangis karena beratnya beban hidup, ingatlah ayat ini. Air matamu ada batasnya. Kesukacitaan abadi di surga sedang menunggumu." },
+            { sumber: "Wahyu 22:13", teks: '"Aku adalah Alfa dan Omega, Yang Pertama dan Yang Terkemudian, Yang Awal dan Yang Akhir."', pengertian: "Pernyataan kedaulatan mutlak Kristus atas waktu dan sejarah semesta. Dia yang memulai segalanya, dan di dalam Dia pula segala sesuatu akan berakhir.", penerapan: "Tuhan tahu persis masa lalumu (Alfa) dan memegang kendali penuh atas masa depanmu (Omega). Serahkan seluruh jalan hidupmu dengan tenang ke dalam tangan-Nya." },
+            { sumber: "Amsal 16:3", teks: '"Serahkanlah perbuatanmu kepada TUHAN, maka terlaksanalah rencanamu."', pengertian: "Kesuksesan sejati datang ketika kita mengundang Tuhan untuk menjadi Direktur Utama dalam setiap rencana bisnis, studi, maupun hidup kita.", penerapan: "Sebelum memulai pekerjaan atau proyek baru, doakan dan dedikasikan hasil akhirnya untuk Tuhan. Dia yang akan membuka jalan kemudahan bagimu." }
+            
+            
+        ];
+
+                // 4. Proses Pencetakan HTML Otomatis
+        const container = document.getElementById('verses-container');
+
+        dataAyatEmas.forEach((ayat) => {
+            const card = document.createElement('div');
+            card.className = 'verse-card';
+
+            // STRUKTUR BARU: 
+            card.innerHTML = `
+                <div class="verse-source">
+                    <span>${ayat.sumber}</span>
+                    <span class="expand-icon">+</span>
+                </div>
+                
+                <div class="verse-details">
+                    <p class="verse-quote">${ayat.teks}</p>
+                    <div class="detail-section">
+                        <div class="detail-title">📖 Pengertian</div>
+                        <p class="detail-text">${ayat.pengertian}</p>
+                    </div>
+                    <div class="detail-section">
+                        <div class="detail-title">🌍 Penerapan Dunia</div>
+                        <p class="detail-text">${ayat.penerapan}</p>
+                    </div>
+                </div>
+            `;
+
+            card.addEventListener('click', function() {
+                if (this.classList.contains('active')) {
+                    this.classList.remove('active');
+                } else {
+                    document.querySelectorAll('.verse-card').forEach(c => c.classList.remove('active'));
+                    this.classList.add('active');
+                }
+            });
+
+            container.appendChild(card);
+        });
+    </script>
+</body>
+</html>
