@@ -2,8 +2,8 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Situs Kesaksian & Iman</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Situs Kesaksian & Iman - GloriaTruth</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -13,17 +13,21 @@
             --accent: #ffcc00;
         }
 
+        html, body {
+            margin: 0; padding: 0; width: 100%; overflow-x: hidden; 
+        }
+
         body {
-            margin: 0;
             font-family: 'Montserrat', sans-serif;
             background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), 
                         url('https://files.catbox.moe/zoym9j.jpg') no-repeat center center fixed;
             background-size: cover;
             color: var(--text-color);
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            display: flex; flex-direction: column; align-items: center;
         }
+
+        * { box-sizing: border-box; }
 
         /* Loading Screen */
         #loading-screen {
@@ -37,37 +41,43 @@
         .random-verse { font-style: italic; opacity: 0.8; text-align: center; max-width: 70%; font-size: 0.95rem; line-height: 1.6; }
 
         /* Main Content */
-        #main-content { opacity: 0; transition: opacity 1s ease; padding: 20px; }
-        .top-bar {
-            margin: 20px auto; width: 95%; max-width: 1100px;
-            padding: 15px 25px; background: rgba(0,0,0,0.5); backdrop-filter: blur(15px);
-            border: 1px solid var(--glass-border); border-radius: 50px;
-            display: flex; justify-content: space-between; align-items: center;
+        #main-content { 
+            opacity: 0; transition: opacity 1s ease; padding: 20px; 
+            width: 100%; max-width: 1100px; margin-top: 40px; text-align: center;
         }
 
-        .container { max-width: 1100px; margin: 40px auto; text-align: center; width: 100%; }
+        /* Teks Sambutan GloriaTruth */
+        .welcome-text {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(1.8rem, 5vw, 3rem);
+            color: var(--accent);
+            letter-spacing: 4px;
+            margin-top: 0;
+            margin-bottom: 35px;
+            text-shadow: 0 0 20px rgba(255,204,0,0.4);
+            text-transform: uppercase;
+        }
 
         /* Stats: Sejajar ke samping */
         .stats-container {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-bottom: 30px;
-            width: 100%;
+            display: flex; justify-content: center; gap: 20px; margin-bottom: 30px; width: 100%; flex-wrap: wrap;
         }
         .stat-box {
             background: var(--glass-bg); backdrop-filter: blur(12px);
             border: 1px solid var(--glass-border); border-radius: 20px;
-            padding: 25px; flex: 1; max-width: 320px;
+            padding: 25px; flex: 1; min-width: 250px; max-width: 320px;
         }
         .stat-box h3 { font-family: 'Cinzel', serif; font-size: 0.8rem; color: var(--accent); margin-bottom: 10px; letter-spacing: 1px; }
         .stat-box p { font-size: 2rem; font-weight: 700; margin: 0; }
+        
+        #box-clock { font-size: 1.8rem; letter-spacing: 2px; }
 
         .long-verse-box {
             background: var(--glass-bg); backdrop-filter: blur(12px);
             border: 1px solid var(--glass-border); border-radius: 25px;
             padding: 40px; margin: 30px auto; max-width: 1000px;
-            font-size: 1.3rem; line-height: 1.8;
+            font-size: 1.25rem; line-height: 1.8;
+            font-style: italic;
         }
 
         .btn-enter {
@@ -75,10 +85,9 @@
             background: linear-gradient(45deg, var(--accent), #ffd700);
             color: #000; text-decoration: none; border-radius: 50px;
             font-family: 'Cinzel', serif; font-weight: bold; font-size: 1.1rem;
-            transition: 0.3s;
+            transition: 0.3s; margin-top: 10px;
         }
         .btn-enter:hover { transform: scale(1.05); box-shadow: 0 0 25px rgba(255,204,0,0.5); }
-        .theme-toggle { background: var(--accent); border: none; padding: 8px 15px; border-radius: 20px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -89,41 +98,101 @@
         <div class="random-verse" id="loading-verse">Memuat Sabda...</div>
     </div>
 
-    <div class="top-bar">
-        <div id="wib-clock">WIB: --:--:--</div>
-        <button class="theme-toggle">THEME</button>
-    </div>
+    <div id="main-content">
+        <h1 class="welcome-text">Welcome to GloriaTruth</h1>
 
-    <div id="main-content" class="container">
         <div class="stats-container">
-            <div class="stat-box"><h3>TOTAL AYAT SUCI</h3><p>31.102</p></div>
-            <div class="stat-box"><h3>TAMU HARI INI</h3><p>128</p></div>
-            <div class="stat-box"><h3>TOTAL KUNJUNGAN</h3><p>15.402</p></div>
+            <div class="stat-box"><h3>WAKTU HARI INI</h3><p id="box-clock">--:--:--</p></div>
+            <div class="stat-box"><h3>TAMU HARI INI</h3><p id="tamu-harian">0</p></div>
+            <div class="stat-box"><h3>TOTAL KUNJUNGAN</h3><p id="total-tamu">0</p></div>
         </div>
 
-        <div class="long-verse-box">
-            "Sebab demikian besar kasih Allah akan dunia ini, sehingga Ia telah mengaruniakan Anak-Nya yang tunggal, supaya setiap orang yang percaya kepada-Nya tidak binasa, melainkan beroleh hidup yang kekal."
-            <br><small style="color: var(--accent); font-weight: 600;">(Yohanes 3:16)</small>
+        <div class="long-verse-box" id="daily-long-verse">
+            Memuat ayat...
         </div>
 
         <a href="home.html" class="btn-enter" id="enter-link">MASUK KE RUMAH DOA</a>
     </div>
 
     <script>
+        // 1. Fungsi Jam Real-Time WIB
         function updateClock() {
             const time = new Date().toLocaleTimeString('id-ID', {timeZone:'Asia/Jakarta', hour12:false});
-            document.getElementById('wib-clock').textContent = `WIB: ${time}`;
+            document.getElementById('box-clock').textContent = time;
         }
         setInterval(updateClock, 1000); updateClock();
 
-        const verses = [
+        // 2. Ayat Loading Acak (Ayat Pendek)
+        const loadingVerses = [
             {t: '"Akulah jalan dan kebenaran dan hidup."', s: "Yohanes 14:6"},
             {t: '"Tuhan adalah gembalaku, takkan kekurangan aku."', s: "Mazmur 23:1"},
-            {t: '"Jangan takut, sebab Aku menyertai engkau."', s: "Yesaya 41:10"}
+            {t: '"Jangan takut, sebab Aku menyertai engkau."', s: "Yesaya 41:10"},
+            {t: '"Percayalah kepada TUHAN dengan segenap hatimu..."', s: "Amsal 3:5"}
         ];
-        const v = verses[Math.floor(Math.random() * verses.length)];
+        const v = loadingVerses[Math.floor(Math.random() * loadingVerses.length)];
         document.getElementById('loading-verse').innerHTML = `${v.t}<br><strong>(${v.s})</strong>`;
 
+        // 3. Ayat Utama Acak Tanpa Tombol (Ayat Panjang setelah loading)
+        const longVerses = [
+            {t: '"Sebab demikian besar kasih Allah akan dunia ini, sehingga Ia telah mengaruniakan Anak-Nya yang tunggal, supaya setiap orang yang percaya kepada-Nya tidak binasa, melainkan beroleh hidup yang kekal."', s: "Yohanes 3:16"},
+            {t: '"Kasih itu sabar; kasih itu murah hati; ia tidak cemburu. Ia tidak memegahkan diri dan tidak sombong. Ia tidak melakukan yang tidak sopan dan tidak mencari keuntungan diri sendiri. Ia tidak pemarah dan tidak menyimpan kesalahan orang lain."', s: "1 Korintus 13:4-5"},
+            {t: '"Sebab aku yakin, bahwa baik maut, maupun hidup, baik malaikat-malaikat, maupun pemerintah-pemerintah, baik yang ada sekarang, maupun yang akan datang, atau kuasa-kuasa, baik yang di atas, maupun yang di bawah, ataupun sesuatu makhluk lain, tidak akan dapat memisahkan kita dari kasih Allah, yang ada dalam Kristus Yesus, Tuhan kita."', s: "Roma 8:38-39"},
+            {t: '"Orang yang duduk dalam lindungan Yang Mahatinggi dan bermalam dalam naungan Yang Mahakuasa akan berkata kepada TUHAN: Tempat perlindunganku dan kubu pertahananku, Allahku, yang kupercayai."', s: "Mazmur 91:1-2"}
+        ];
+        // Pilih ayat panjang secara acak
+        const randLongVerse = longVerses[Math.floor(Math.random() * longVerses.length)];
+        // Masukkan ke dalam kotak HTML
+        document.getElementById('daily-long-verse').innerHTML = `"${randLongVerse.t}"<br><br><small style="color: var(--accent); font-weight: 600; font-style: normal;">(${randLongVerse.s})</small>`;
+
+        // 4. Logika Statistik Pengunjung 
+        function generateRealisticStats() {
+            const wibString = new Date().toLocaleString("en-US", {timeZone: "Asia/Jakarta"});
+            const now = new Date(wibString);
+            const currentHour = now.getHours();
+            const currentDateStr = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
+
+            function getIncrement(dateStr, hour) {
+                let seed = dateStr + "-" + hour;
+                let hash = 0;
+                for (let i = 0; i < seed.length; i++) {
+                    hash = ((hash << 5) - hash) + seed.charCodeAt(i);
+                    hash |= 0;
+                }
+                return Math.abs(hash % 4) + 5; 
+            }
+
+            let tamuHariIni = 0;
+            if (currentHour >= 7) {
+                for (let h = 7; h <= currentHour; h++) {
+                    tamuHariIni += getIncrement(currentDateStr, h);
+                }
+            }
+
+            let totalKunjungan = 0;
+            const tanggalRilis = new Date(now.getFullYear(), now.getMonth(), now.getDate()); 
+            const hariIni = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const hariBerlalu = Math.round((hariIni - tanggalRilis) / (1000 * 60 * 60 * 24));
+
+            if (hariBerlalu > 0) {
+                for (let d = 0; d < hariBerlalu; d++) {
+                    let pastDate = new Date(tanggalRilis.getTime() + (d * 86400000));
+                    let pDateStr = `${pastDate.getFullYear()}-${pastDate.getMonth() + 1}-${pastDate.getDate()}`;
+                    for (let h = 7; h <= 23; h++) {
+                        totalKunjungan += getIncrement(pDateStr, h);
+                    }
+                }
+            }
+
+            totalKunjungan += tamuHariIni;
+
+            document.getElementById('tamu-harian').textContent = tamuHariIni.toLocaleString('id-ID');
+            document.getElementById('total-tamu').textContent = totalKunjungan.toLocaleString('id-ID');
+        }
+        
+        generateRealisticStats();
+        setInterval(generateRealisticStats, 60000);
+
+        // 5. Animasi Loading
         let progress = 0;
         const interval = setInterval(() => {
             progress++;
@@ -138,6 +207,14 @@
                 }, 1000);
             }
         }, 50);
+
+        // 6. Animasi Keluar
+        document.getElementById('enter-link').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.body.style.opacity = '0';
+            document.body.style.transition = 'opacity 0.8s ease';
+            setTimeout(() => { window.location.href = this.href; }, 800);
+        });
     </script>
 </body>
 </html>
