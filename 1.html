@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mukjizat Yesus - GloriaTruth</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Montserrat:wght@300;500;700;italic&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --glass-bg: rgba(0, 0, 0, 0.45);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --text-color: #ffffff;
+            --accent: #ffcc00;
+        }
+
+        html, body { overflow-x: hidden; margin: 0; padding: 0; width: 100%; }
+
+        @keyframes blurIn {
+            from { filter: blur(30px); opacity: 0; transform: scale(1.03); }
+            to { filter: blur(0); opacity: 1; transform: scale(1); }
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), 
+                        url('https://files.catbox.moe/zoym9j.jpg') center/cover fixed;
+            color: var(--text-color);
+            min-height: 100vh;
+            animation: blurIn 1.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+            padding-bottom: 60px;
+        }
+
+        * { box-sizing: border-box; }
+
+        /* Top Bar */
+        .top-bar {
+            position: sticky; top: 15px; margin: 15px 20px; padding: 12px 25px;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(20px);
+            border-radius: 50px; border: 1px solid var(--glass-border);
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .btn-back {
+            display: flex; justify-content: center; align-items: center;
+            width: 40px; height: 40px; border-radius: 50%;
+            background: rgba(255, 204, 0, 0.1); border: 1px solid var(--accent);
+            color: var(--accent); text-decoration: none;
+            transition: all 0.3s ease; z-index: 2;
+        }
+        .btn-back svg { width: 20px; height: 20px; }
+        .btn-back:hover { 
+            background: var(--accent); color: #000; 
+            transform: translateX(-5px) scale(1.05); 
+            box-shadow: 0 0 15px rgba(255, 204, 0, 0.5); 
+        }
+
+        #wib-clock {
+            position: absolute; left: 50%; transform: translateX(-50%);
+            font-size: 0.9rem; font-weight: 500; letter-spacing: 1px; z-index: 1;
+        }
+
+        .container { max-width: 1000px; margin: 40px auto; padding: 0 20px; text-align: center; }
+        
+        h1 { 
+            font-family: 'Cinzel', serif; font-size: clamp(1.8rem, 6vw, 2.5rem); 
+            letter-spacing: 3px; margin-bottom: 10px; color: var(--accent); 
+            text-shadow: 0 0 15px rgba(255,204,0,0.3);
+        }
+        .subtitle { font-size: 0.95rem; opacity: 0.8; margin-bottom: 40px; font-weight: 300; }
+
+        /* Grid Layout */
+        .verses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            text-align: left;
+        }
+
+        .verse-card {
+            background: var(--glass-bg); backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border); border-radius: 20px;
+            padding: 25px; cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            position: relative; overflow: hidden;
+            display: flex; flex-direction: column;
+        }
+
+        .verse-card:hover {
+            transform: translateY(-5px); background: rgba(255,255,255,0.08);
+            border-color: var(--accent); box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+        }
+
+        .verse-source {
+            font-family: 'Cinzel', serif; font-size: 1.1rem; color: var(--accent);
+            font-weight: 700; margin: 0; display: flex; justify-content: space-between; align-items: center;
+        }
+
+        .expand-icon { font-size: 1.5rem; font-weight: 300; transition: transform 0.4s ease; }
+        .verse-card.active .expand-icon { transform: rotate(45deg); color: #ff5555; }
+
+        /* Detail Area */
+        .verse-details {
+            max-height: 0; opacity: 0; overflow: hidden;
+            transition: max-height 0.8s ease-in-out, opacity 0.6s ease-in-out 0.1s, margin-top 0.4s ease;
+        }
+
+        .verse-card.active .verse-details { max-height: 1200px; opacity: 1; margin-top: 20px; }
+
+        .verse-quote {
+            font-size: 1.05rem; font-style: italic; line-height: 1.6; margin: 0 0 15px 0;
+            font-weight: 500; color: #fff; border-bottom: 1px dashed rgba(255,255,255,0.2);
+            padding-bottom: 15px; text-align: left;
+        }
+
+        .detail-section { margin-top: 15px; }
+        .detail-title {
+            font-family: 'Cinzel', serif; font-size: 0.9rem; color: var(--accent);
+            letter-spacing: 1px; margin-bottom: 5px;
+        }
+        .detail-text { font-size: 0.9rem; line-height: 1.6; opacity: 0.9; margin: 0; font-weight: 300; }
+
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <a href="home.html" class="btn-back" title="Kembali ke Menu">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </a>
+        <div id="wib-clock">WIB: --:--:--</div>
+        <div style="width: 40px;"></div> 
+    </div>
+
+    <div class="container">
+        <h1>MUKJIZAT TUHAN YESUS</h1>
+        <p class="subtitle">Ketuk mukjizat untuk melihat kisah, makna, dan manfaatnya bagi masa kini.</p>
+        
+        <div id="mukjizat-container" class="verses-grid"></div>
+    </div>
+
+    <script>
+        function updateClock() {
+            const time = new Date().toLocaleTimeString('id-ID', {timeZone:'Asia/Jakarta', hour12:false});
+            document.getElementById('wib-clock').textContent = `WIB: ${time}`;
+        }
+        setInterval(updateClock, 1000); updateClock();
+
+        // DATABASE MUKJIZAT
+        const dataMukjizat = [
+            {
+                judul: "Air Menjadi Anggur di Kana",
+                sumber: "Yohanes 2:1-11",
+                kisah: "Yesus mengubah air menjadi anggur kualitas terbaik dalam sebuah pesta perkawinan ketika mereka kehabisan stok. Ini adalah mukjizat pertama-Nya.",
+                makna: "Melambangkan bahwa kehadiran Yesus membawa transformasi. Hidup yang tawar dan hambar dapat diubah menjadi penuh sukacita dan berkat.",
+                manfaat: "Mengajarkan kita untuk selalu melibatkan Yesus dalam setiap aspek kehidupan, termasuk urusan rumah tangga dan kegembiraan kita."
+            },
+            {
+                judul: "Memberi Makan 5.000 Orang",
+                sumber: "Matius 14:13-21",
+                kisah: "Hanya dengan 5 roti dan 2 ikan, Yesus memberi makan ribuan orang hingga kenyang dan bahkan bersisa 12 bakul.",
+                makna: "Menunjukkan bahwa Yesus adalah 'Roti Hidup' yang mampu mencukupkan segala kebutuhan fisik dan jiwa kita.",
+                manfaat: "Mengingatkan kita untuk jangan khawatir akan kebutuhan hidup. Sedikit yang kita miliki, jika diberkati Tuhan, akan menjadi lebih dari cukup."
+            },
+            {
+                judul: "Menenangkan Angin Ribut",
+                sumber: "Markus 4:35-41",
+                kisah: "Yesus menghardik badai yang dahsyat di danau, dan seketika itu juga suasana menjadi tenang sekali.",
+                makna: "Yesus memiliki otoritas mutlak atas alam semesta dan segala kekacauan yang ada di dalamnya.",
+                manfaat: "Memberikan kekuatan saat kita menghadapi 'badai hidup' (masalah berat). Jika Yesus ada di perahu hidupmu, badai tidak akan menenggelamkanmu."
+            },
+            {
+                judul: "Berjalan di Atas Air",
+                sumber: "Matius 14:22-33",
+                kisah: "Yesus mendatangi murid-murid-Nya dengan berjalan di atas air di tengah danau yang sedang bergelombang.",
+                makna: "Kuasa ilahi Yesus melampaui hukum fisika dan keterbatasan duniawi.",
+                manfaat: "Mengajarkan kita untuk terus fokus memandang Yesus di tengah masalah agar kita tidak tenggelam dalam ketakutan."
+            },
+            {
+                judul: "Membangkitkan Lazarus",
+                sumber: "Yohanes 11:1-44",
+                kisah: "Yesus membangkitkan Lazarus yang sudah mati dan dikubur selama empat hari.",
+                makna: "Yesus adalah kebangkitan dan hidup. Dia memiliki kuasa atas maut dan memberikan harapan kekal.",
+                manfaat: "Memberi pengharapan bahwa tidak ada situasi yang 'terlalu mati' atau 'terlalu terlambat' bagi Tuhan untuk memulihkannya."
+            },
+            {
+                judul: "Menyembuhkan Orang Buta Sejak Lahir",
+                sumber: "Yohanes 9:1-12",
+                kisah: "Yesus mencelikkan mata seorang pria yang lahir buta agar pekerjaan Allah dinyatakan melalui dia.",
+                makna: "Yesus adalah Terang Dunia yang membuka mata rohani kita untuk melihat kebenaran Bapa.",
+                manfaat: "Tuhan sanggup memberikan 'penglihatan' atau solusi baru bagi masalah yang sepertinya tidak ada jalan keluarnya."
+            },
+            {
+                judul: "Menyembuhkan Orang Lumpuh di Kapernaum",
+                sumber: "Markus 2:1-12",
+                kisah: "Seorang lumpuh diturunkan melalui atap, dan Yesus menyembuhkannya serta mengampuni dosanya.",
+                makna: "Kesembuhan dari Yesus bersifat utuh: fisik dan rohani (pengampunan dosa).",
+                manfaat: "Mengingatkan kita akan pentingnya persahabatan yang membawa kita kepada Tuhan dan iman yang gigih."
+            },
+            {
+                judul: "Menyembuhkan Perempuan Sakit Pendarahan",
+                sumber: "Lukas 8:43-48",
+                kisah: "Seorang perempuan yang sakit selama 12 tahun sembuh seketika hanya dengan menjamah jumbai jubah Yesus.",
+                makna: "Iman yang tulus dan penuh keberanian menarik kuasa Tuhan untuk bekerja.",
+                manfaat: "Jangan menyerah pada penyakit atau penderitaan yang lama. Tuhan menghargai iman yang terus berharap pada-Nya."
+            },
+            {
+                judul: "Menyembuhkan Sepuluh Orang Kusta",
+                sumber: "Lukas 17:11-19",
+                kisah: "Sepuluh orang kusta disembuhkan saat mereka sedang dalam perjalanan untuk menunjukkan diri kepada imam.",
+                makna: "Ketaatan pada perintah Tuhan, meskipun belum terlihat hasilnya, membuahkan mukjizat.",
+                manfaat: "Pentingnya rasa syukur. Jangan hanya datang saat butuh, tapi kembalilah untuk berterima kasih setelah diberkati."
+            },
+            {
+                judul: "Membangkitkan Anak Yairus",
+                sumber: "Markus 5:21-43",
+                kisah: "Yesus membangkitkan putri kepala rumah ibadat yang telah meninggal, dengan berkata 'Talita kum!'.",
+                makna: "Tuhan berkuasa atas waktu dan kematian. Bagi-Nya, kematian hanyalah seperti tidur.",
+                manfaat: "Menguatkan para orang tua untuk selalu membawa anak-anak mereka di dalam doa kepada Yesus."
+            },
+            {
+                judul: "Memberi Makan 4.000 Orang",
+                sumber: "Markus 8:1-10",
+                kisah: "Mukjizat kedua memberi makan orang banyak, menunjukkan kasih Yesus yang tidak terbatas pada satu kelompok saja.",
+                makna: "Tuhan adalah penyedia yang setia bagi setiap orang yang mengikut Dia.",
+                manfaat: "Belas kasihan Tuhan selalu tersedia baru setiap hari bagi mereka yang letih lesu."
+            },
+            {
+                judul: "Menyembuhkan Hamba Perwira di Kapernaum",
+                sumber: "Matius 8:5-13",
+                kisah: "Yesus menyembuhkan hamba perwira Romawi dari jarak jauh hanya melalui perkataan-Nya.",
+                makna: "Kuasa firman Yesus tidak dibatasi oleh ruang dan jarak fisik.",
+                manfaat: "Kita bisa mendoakan orang lain yang jauh lokasinya, percaya bahwa Tuhan sanggup menjamah mereka di sana."
+            },
+            {
+                judul: "Mengusir Roh Jahat di Gerasa",
+                sumber: "Markus 5:1-20",
+                kisah: "Yesus membebaskan seorang pria yang kerasukan ribuan roh jahat (Legion) dan mengembalikan kewarasannya.",
+                makna: "Kuasa Yesus jauh lebih tinggi daripada segala kekuatan gelap dan okultisme.",
+                manfaat: "Memberikan rasa aman bahwa di dalam nama Yesus, kita dilindungi dari segala gangguan kuasa gelap."
+            },
+            {
+                judul: "Menyembuhkan Orang Sakit di Bethesda",
+                sumber: "Yohanes 5:1-18",
+                kisah: "Yesus menyembuhkan orang yang telah sakit selama 38 tahun di pinggir kolam Bethesda pada hari Sabat.",
+                makna: "Kasih dan kesembuhan Tuhan melampaui aturan-aturan hukum agama yang kaku.",
+                manfaat: "Tuhan peduli pada mereka yang merasa sendirian dan tidak punya penolong. Dia yang akan mendatangimu."
+            },
+            {
+                judul: "Kutukan Pohon Ara",
+                sumber: "Matius 21:18-22",
+                kisah: "Yesus mengutuk pohon ara yang tidak berbuah hingga kering, menunjukkan pentingnya iman yang menghasilkan buah.",
+                makna: "Peringatan bagi orang percaya untuk tidak hanya memiliki penampilan rohani, tapi harus berbuah nyata.",
+                manfaat: "Mendorong kita untuk hidup produktif di dalam Tuhan dan menghasilkan buah kebaikan bagi sesama."
+            }
+            // Kamu bisa menambahkan lebih banyak mukjizat di sini dengan pola yang sama
+        ];
+
+        const container = document.getElementById('mukjizat-container');
+
+        dataMukjizat.forEach((item) => {
+            const card = document.createElement('div');
+            card.className = 'verse-card';
+
+            card.innerHTML = `
+                <div class="verse-source">
+                    <span>${item.judul}</span>
+                    <span class="expand-icon">+</span>
+                </div>
+                
+                <div class="verse-details">
+                    <p class="verse-quote">"${item.sumber}"</p>
+                    <div class="detail-section">
+                        <div class="detail-title">📖 Kisah Singkat</div>
+                        <p class="detail-text">${item.kisah}</p>
+                    </div>
+                    <div class="detail-section">
+                        <div class="detail-title">💡 Makna Rohani</div>
+                        <p class="detail-text">${item.makna}</p>
+                    </div>
+                    <div class="detail-section">
+                        <div class="detail-title">✨ Manfaat Masa Sekarang</div>
+                        <p class="detail-text">${item.manfaat}</p>
+                    </div>
+                </div>
+            `;
+
+            card.addEventListener('click', function() {
+                if (this.classList.contains('active')) {
+                    this.classList.remove('active');
+                } else {
+                    document.querySelectorAll('.verse-card').forEach(c => c.classList.remove('active'));
+                    this.classList.add('active');
+                }
+            });
+
+            container.appendChild(card);
+        });
+    </script>
+</body>
+</html>

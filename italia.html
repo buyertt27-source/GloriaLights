@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Santo & Santa Italia - GloriaTruth</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Montserrat:wght@300;500;700;italic&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --glass-bg: rgba(0, 0, 0, 0.45);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --text-color: #ffffff;
+            --accent: #ffcc00;
+            --badge-bg: rgba(255, 204, 0, 0.2);
+        }
+
+        html, body { overflow-x: hidden; margin: 0; padding: 0; width: 100%; }
+
+        @keyframes blurIn {
+            from { filter: blur(30px); opacity: 0; transform: scale(1.03); }
+            to { filter: blur(0); opacity: 1; transform: scale(1); }
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), 
+                        url('https://files.catbox.moe/zoym9j.jpg') center/cover fixed;
+            color: var(--text-color);
+            min-height: 100vh;
+            animation: blurIn 1.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+            padding-bottom: 60px;
+        }
+
+        * { box-sizing: border-box; }
+
+        /* --- STICKY TOP BAR BARU (SEARCH & CLOCK) --- */
+        .top-bar {
+            position: fixed; top: 0; left: 0; right: 0;
+            padding: 12px 15px;
+            background: rgba(0,0,0,0.75); backdrop-filter: blur(25px);
+            border-bottom: 1px solid var(--glass-border);
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 1000; gap: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+        }
+
+        .btn-back {
+            display: flex; justify-content: center; align-items: center;
+            width: 35px; height: 35px; border-radius: 50%; flex-shrink: 0;
+            background: rgba(255, 204, 0, 0.1); border: 1px solid var(--accent);
+            color: var(--accent); text-decoration: none; transition: 0.3s;
+        }
+        .btn-back svg { width: 18px; height: 18px; }
+        .btn-back:hover { background: var(--accent); color: #000; transform: scale(1.05); }
+
+        .search-box {
+            flex: 1; position: relative;
+        }
+
+        .search-input {
+            width: 100%; padding: 8px 15px 8px 35px;
+            background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border);
+            border-radius: 50px; color: white; font-family: 'Montserrat', sans-serif;
+            font-size: 0.85rem; outline: none; transition: 0.3s;
+        }
+        .search-input:focus { border-color: var(--accent); background: rgba(255,255,255,0.15); }
+        .search-input::placeholder { color: rgba(255,255,255,0.6); }
+        
+        .search-icon {
+            position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+            color: var(--accent); width: 16px; height: 16px;
+        }
+
+        #wib-clock {
+            font-size: 0.75rem; color: var(--accent); font-weight: 700; 
+            letter-spacing: 0.5px; flex-shrink: 0; white-space: nowrap;
+        }
+
+        /* --- VERTICAL ALPHABET SIDEBAR (Kanan Sejajar) --- */
+        .alphabet-filter {
+            position: fixed; right: 5px; top: 55%; transform: translateY(-50%);
+            display: flex; flex-direction: column; gap: 2px; z-index: 999;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(15px);
+            padding: 10px 5px; border-radius: 20px; border: 1px solid var(--glass-border);
+            box-shadow: -5px 0 20px rgba(0,0,0,0.5);
+        }
+
+        .alpha-btn {
+            background: transparent; border: none; color: rgba(255,255,255,0.7); 
+            font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 0.65rem;
+            cursor: pointer; padding: 2px 0; width: 22px; text-align: center;
+            transition: 0.2s; border-radius: 50%;
+        }
+        .alpha-btn.active, .alpha-btn:hover { 
+            color: var(--accent); transform: scale(1.4); text-shadow: 0 0 10px var(--accent);
+        }
+
+        /* --- KONTEN UTAMA --- */
+        /* Padding atas ditambah karena top-bar fixed, padding kanan ditambah agar tidak ketutup A-Z */
+        .container { max-width: 1100px; margin: 0 auto; padding: 90px 45px 40px 20px; text-align: center; }
+        
+        .country-header { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 30px; }
+        .flag-large { font-size: 3.5rem; filter: drop-shadow(0 0 15px rgba(0,0,0,0.8)); margin-bottom: 5px; }
+        h1 { font-family: 'Cinzel', serif; font-size: clamp(1.5rem, 6vw, 2.2rem); letter-spacing: 3px; margin: 0 0 5px 0; color: var(--accent); text-shadow: 0 0 15px rgba(255,204,0,0.3); }
+        .subtitle { font-size: 0.85rem; opacity: 0.8; margin: 0; font-weight: 300; }
+
+        .saints-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; text-align: left; }
+        
+        .no-results { grid-column: 1 / -1; text-align: center; font-size: 1rem; color: #ccc; font-style: italic; margin-top: 20px; }
+
+        .saint-card {
+            background: var(--glass-bg); backdrop-filter: blur(15px); border: 1px solid var(--glass-border); border-radius: 20px;
+            padding: 20px; cursor: pointer; transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            position: relative; overflow: hidden; display: flex; flex-direction: column;
+        }
+        .saint-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
+
+        .saint-header { display: flex; justify-content: space-between; align-items: flex-start; }
+        .saint-name { font-family: 'Cinzel', serif; font-size: 1.1rem; color: var(--accent); font-weight: 700; margin: 0 0 5px 0; line-height: 1.3; }
+        .feast-day { font-size: 0.75rem; font-style: italic; color: #ccc; margin: 0; }
+        .expand-icon { font-size: 1.2rem; font-weight: 300; transition: transform 0.4s ease; margin-left: 10px; color: var(--accent); }
+        .saint-card.active .expand-icon { transform: rotate(45deg); color: #ff5555; }
+
+        .saint-details { max-height: 0; opacity: 0; overflow: hidden; transition: max-height 0.8s ease-in-out, opacity 0.6s ease-in-out 0.1s, margin-top 0.4s ease; }
+        .saint-card.active .saint-details { max-height: 1500px; opacity: 1; margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;}
+
+        .info-badge-container { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+        .info-badge { background: var(--badge-bg); border: 1px solid var(--accent); color: var(--accent); font-size: 0.7rem; padding: 3px 8px; border-radius: 20px; font-weight: bold; }
+
+        .detail-section { margin-bottom: 12px; }
+        .detail-title { font-family: 'Cinzel', serif; font-size: 0.85rem; color: var(--accent); letter-spacing: 1px; margin-bottom: 4px; }
+        .detail-text { font-size: 0.85rem; line-height: 1.6; opacity: 0.9; margin: 0; font-weight: 300; }
+        .saint-quote { font-style: italic; color: #fff; font-weight: 500; border-left: 3px solid var(--accent); padding-left: 10px; margin: 12px 0 0 0; font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <a href="region.html" class="btn-back" title="Kembali">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </a>
+        <div class="search-box">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" id="search-input" class="search-input" placeholder="Cari Santo...">
+        </div>
+        <div id="wib-clock">--:-- WIB</div>
+    </div>
+
+    <div class="alphabet-filter" id="alphabet-filters">
+        <button class="alpha-btn active" data-letter="ALL">ALL</button>
+        </div>
+
+    <div class="container">
+        <div class="country-header">
+            <div class="flag-large">🇮🇹</div>
+            <h1>ITALIA</h1>
+            <p class="subtitle">Bumi Para Paus, Pujangga Gereja, dan Mistikus Agung</p>
+        </div>
+        
+        <div id="saints-container" class="saints-grid">
+            </div>
+    </div>
+
+    <script>
+        // Logika Jam WIB di Top Bar
+        function updateClock() {
+            const time = new Date().toLocaleTimeString('id-ID', {timeZone:'Asia/Jakarta', hour12:false, hour: '2-digit', minute: '2-digit'});
+            document.getElementById('wib-clock').textContent = `${time} WIB`;
+        }
+        setInterval(updateClock, 1000); updateClock();
+
+        // 1. DATABASE SEMENTARA (24 Data agar aman dites)
+        const dataSantoItalia = [
+            { nama: "St. Fransiskus dari Asisi", peringatan: "4 Oktober", masaHidup: "1181 – 1226", pelindung: "Ekologi, Hewan", kisah: "Meninggalkan kekayaan demi kemiskinan radikal. Pendiri Ordo Fransiskan.", teladan: "Kesederhanaan mutlak dan cinta pada ciptaan Tuhan.", kutipan: "Mulai dengan melakukan apa yang perlu..." },
+            { nama: "St. Katarina dari Siena", peringatan: "29 April", masaHidup: "1347 – 1380", pelindung: "Eropa, Perawat", kisah: "Mistikus Dominikan yang berani menasihati Paus untuk kembali ke Roma.", teladan: "Keberanian menyuarakan kebenaran demi Gereja.", kutipan: "Jika engkau menjadi dirimu yang seharusnya, engkau akan membakar dunia." },
+            { nama: "St. Thomas Aquinas", peringatan: "28 Januari", masaHidup: "1225 – 1274", pelindung: "Pelajar, Teolog", kisah: "Pujangga Gereja yang menyatukan rasionalitas filsafat dan teologi.", teladan: "Kecerdasan akal budi yang tunduk pada iman.", kutipan: "Bagi yang percaya tidak butuh penjelasan..." },
+            { nama: "St. Padre Pio", peringatan: "23 September", masaHidup: "1887 – 1968", pelindung: "Relawan", kisah: "Imam Kapusin pemegang stigmata yang bisa membaca isi hati umat.", teladan: "Pengorbanan diri dalam pelayanan pengakuan dosa.", kutipan: "Berdoalah, berharaplah, dan jangan khawatir." },
+            { nama: "St. Yohanes Bosco", peringatan: "31 Januari", masaHidup: "1815 – 1888", pelindung: "Kaum Muda", kisah: "Mendedikasikan hidupnya untuk mendidik anak jalanan di Turin.", teladan: "Pendidikan berbasis kasih, bukan hukuman.", kutipan: "Bagi anak muda, tidak cukup hanya dikasihi; mereka harus tahu dikasihi." },
+            { nama: "St. Benediktus", peringatan: "11 Juli", masaHidup: "480 – 547", pelindung: "Eropa", kisah: "Bapa monastisisme Barat yang menetapkan aturan Ora et Labora.", teladan: "Keseimbangan doa dan karya.", kutipan: "Kemalasan adalah musuh jiwa." },
+            { nama: "St. Clara dari Asisi", peringatan: "11 Agustus", masaHidup: "1194 – 1253", pelindung: "Televisi", kisah: "Pengikut setia Fransiskus yang mendirikan ordo suster Klaris.", teladan: "Keteguhan iman mengusir musuh hanya dengan Hosti Kudus.", kutipan: "Jadilah cermin Kristus di dunia ini." },
+            { nama: "St. Rita dari Cascia", peringatan: "22 Mei", masaHidup: "1381 – 1457", pelindung: "Kasus Mustahil", kisah: "Biarawati yang hidupnya penuh penderitaan rumah tangga namun sabar.", teladan: "Ketabahan memanggul salib penderitaan batin.", kutipan: "Dalam keheningan doa, hati yang paling keras pun dapat dicairkan." },
+            { nama: "St. Petrus Rasul", peringatan: "29 Juni", masaHidup: "Wafat ±64 M", pelindung: "Paus, Nelayan", kisah: "Paus pertama yang mati martir disalib terbalik di Roma.", teladan: "Pertobatan yang total dan kepemimpinan berani.", kutipan: "Tuhan, Engkau tahu aku mengasihi-Mu." },
+            { nama: "St. Agnes", peringatan: "21 Januari", masaHidup: "291 – 304", pelindung: "Gadis Muda", kisah: "Gadis 13 tahun yang rela mati dipenggal demi menjaga kemurniannya.", teladan: "Iman teguh di usia sangat muda.", kutipan: "Kristus adalah satu-satunya pasanganku." },
+            { nama: "St. Sebastianus", peringatan: "20 Januari", masaHidup: "256 – 288", pelindung: "Atlet, Tentara", kisah: "Tentara Roma yang dipanah karena imannya tapi tak menyerah.", teladan: "Loyalitas ganda: negara dan Tuhan.", kutipan: "Kuasa kaisar ada batasnya, kuasa Kristus abadi." },
+            { nama: "St. Filipus Neri", peringatan: "26 Mei", masaHidup: "1515 – 1595", pelindung: "Humor, Kegembiraan", kisah: "Dikenal sebagai Rasul Roma yang melayani dengan sukacita dan canda.", teladan: "Menjadikan kekristenan hal yang menyenangkan.", kutipan: "Jadilah orang gembira!" },
+            { nama: "St. Maria Goretti", peringatan: "6 Juli", masaHidup: "1890 – 1902", pelindung: "Korban Kejahatan", kisah: "Gadis yang dibunuh demi kesuciannya, memaafkan pelakunya sebelum wafat.", teladan: "Pengampunan radikal.", kutipan: "Aku memaafkannya dan ingin dia di surga bersamaku." },
+            { nama: "Beato Carlo Acutis", peringatan: "12 Oktober", masaHidup: "1991 – 2006", pelindung: "Internet, Gamer", kisah: "Remaja modern pembuat website mukjizat Ekaristi.", teladan: "Kekudusan melalui teknologi digital.", kutipan: "Semua lahir orisinal, banyak yang mati sebagai fotokopi." },
+            { nama: "St. Dominikus Savio", peringatan: "6 Mei", masaHidup: "1842 – 1857", pelindung: "Anak Paduan Suara", kisah: "Murid Don Bosco yang meninggal sangat muda karena sakit namun sangat saleh.", teladan: "Ketaatan anak-anak kepada Tuhan.", kutipan: "Lebih baik mati daripada berbuat dosa." },
+            { nama: "St. Gianna Beretta Molla", peringatan: "28 April", masaHidup: "1922 – 1962", pelindung: "Ibu Hamil, Dokter", kisah: "Dokter anak yang mengorbankan nyawanya sendiri agar bayinya lahir selamat.", teladan: "Cinta seorang ibu yang menyerupai pengorbanan Kristus.", kutipan: "Cinta dan pengorbanan sangat erat hubungannya." },
+            { nama: "St. Antonius dari Padua", peringatan: "13 Juni", masaHidup: "1195 – 1231", pelindung: "Barang Hilang", kisah: "Lahir di Portugal tapi wafat di Italia. Pengkhotbah ulung yang lidahnya tidak hancur hingga kini.", teladan: "Kecerdasan teologis yang dipadukan dengan kesederhanaan.", kutipan: "Tindakan berbicara lebih keras dari kata-kata." },
+            { nama: "St. Bonaventura", peringatan: "15 Juli", masaHidup: "1221 – 1274", pelindung: "Penyakit Usus", kisah: "Teolog besar Fransiskan dan Uskup Kardinal.", teladan: "Menyatukan filsafat budi dan kasih di hati.", kutipan: "Di dalam segala hal, carilah Allah." },
+            { nama: "St. Kamilus de Lellis", peringatan: "14 Juli", masaHidup: "1550 – 1614", pelindung: "Rumah Sakit, Perawat", kisah: "Mantan tentara dan penjudi yang bertobat lalu mendirikan ordo perawat.", teladan: "Melayani orang sakit bagaikan melayani Kristus sendiri.", kutipan: "Tuhan selalu memberi kesempatan kedua." },
+            { nama: "St. Aloysius Gonzaga", peringatan: "21 Juni", masaHidup: "1568 – 1591", pelindung: "Pemuda Katolik", kisah: "Bangsawan muda Jesuit yang meninggal karena merawat korban wabah pes.", teladan: "Pelepasan total dari harta duniawi demi kemanusiaan.", kutipan: "Aku adalah kepingan besi yang bengkok yang harus diluruskan Tuhan." },
+            { nama: "St. Alfonsus Liguori", peringatan: "1 Agustus", masaHidup: "1696 – 1787", pelindung: "Pengakuan Dosa", kisah: "Uskup yang buta huruf moral diubahnya melalui pengajaran sakramen.", teladan: "Kasih yang besar pada Sakramen Tobat.", kutipan: "Mereka yang berdoa akan diselamatkan." },
+            { nama: "St. Angela Merici", peringatan: "27 Januari", masaHidup: "1474 – 1540", pelindung: "Penyakit Kusta", kisah: "Pendiri Ordo Ursulin untuk pendidikan wanita.", teladan: "Memberdayakan wanita melalui pendidikan Katolik.", kutipan: "Berdoalah selalu dengan pikiran yang jernih." },
+            { nama: "St. Yohanes XXIII", peringatan: "11 Oktober", masaHidup: "1881 – 1963", pelindung: "Konsili Vatikan II", kisah: "Paus yang menginisiasi Konsili Vatikan II untuk memperbarui Gereja.", teladan: "Sikap terbuka dan ramah kepada dunia modern.", kutipan: "Kita tidak berada di bumi untuk menjaga museum, tapi menumbuhkan taman." },
+            { nama: "St. Yohanes Paulus II", peringatan: "22 Oktober", masaHidup: "1920 – 2005", pelindung: "Keluarga Berencana", kisah: "Paus yang berkeliling dunia, memaafkan penembaknya, dan sangat pro-kehidupan.", teladan: "Pengampunan dan penyebaran Kerahiman Ilahi.", kutipan: "Jangan takut! Buka lebar-lebar pintu bagi Kristus!" }
+        ];
+
+        const container = document.getElementById('saints-container');
+        const searchInput = document.getElementById('search-input');
+        const alphabetFilters = document.getElementById('alphabet-filters');
+
+        // FUNGSI RAHASIA: Membersihkan "St." atau "Beato" agar inisial akurat
+        function getCleanInitial(nama) {
+            let clean = nama.replace(/^(St\.|Santo|Santa|Beato|Beata)\s+/i, '').trim();
+            return clean.charAt(0).toUpperCase();
+        }
+
+        // CETAK TOMBOL ALFABET (A-Z) Vertikal
+        const alphabets = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+        alphabets.forEach(letter => {
+            const btn = document.createElement('button');
+            btn.className = 'alpha-btn';
+            btn.textContent = letter;
+            btn.setAttribute('data-letter', letter);
+            alphabetFilters.appendChild(btn);
+        });
+
+        // FUNGSI CETAK KARTU
+        function renderSaints(dataToRender) {
+            container.innerHTML = ''; 
+
+            if(dataToRender.length === 0) {
+                container.innerHTML = '<div class="no-results">Tidak ada Santo/Santa yang cocok...</div>';
+                return;
+            }
+
+            // Agar A-Z rapi, kita urutkan secara abjad berdasarkan nama asli (tanpa St.)
+            const sortedData = dataToRender.sort((a, b) => {
+                let nameA = a.nama.replace(/^(St\.|Santo|Santa|Beato|Beata)\s+/i, '').trim();
+                let nameB = b.nama.replace(/^(St\.|Santo|Santa|Beato|Beata)\s+/i, '').trim();
+                return nameA.localeCompare(nameB);
+            });
+
+            sortedData.forEach((santo) => {
+                const card = document.createElement('div');
+                card.className = 'saint-card';
+
+                card.innerHTML = `
+                    <div class="saint-header">
+                        <div>
+                            <h2 class="saint-name">${santo.nama}</h2>
+                            <p class="feast-day">Pesta: ${santo.peringatan}</p>
+                        </div>
+                        <span class="expand-icon">+</span>
+                    </div>
+                    <div class="saint-details">
+                        <div class="info-badge-container">
+                            <div class="info-badge">⏳ ${santo.masaHidup}</div>
+                            <div class="info-badge">🛡️ ${santo.pelindung}</div>
+                        </div>
+                        <div class="detail-section"><div class="detail-title">📖 Kisah Hidup</div><p class="detail-text">${santo.kisah}</p></div>
+                        <div class="detail-section"><div class="detail-title">✨ Teladan Iman</div><p class="detail-text">${santo.teladan}</p></div>
+                        <p class="saint-quote">"${santo.kutipan}"</p>
+                    </div>
+                `;
+
+                card.addEventListener('click', function() {
+                    if (this.classList.contains('active')) {
+                        this.classList.remove('active');
+                    } else {
+                        document.querySelectorAll('.saint-card').forEach(c => c.classList.remove('active'));
+                        this.classList.add('active');
+                    }
+                });
+
+                container.appendChild(card);
+            });
+        }
+
+        // Tampilkan semua saat pertama kali
+        renderSaints(dataSantoItalia);
+
+        // LOGIKA PENCARIAN MANUAL (Tergabung di Top Bar)
+        searchInput.addEventListener('input', function(e) {
+            const keyword = e.target.value.toLowerCase();
+            
+            document.querySelectorAll('.alpha-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector('[data-letter="ALL"]').classList.add('active');
+
+            const filteredData = dataSantoItalia.filter(santo => {
+                return santo.nama.toLowerCase().includes(keyword) || 
+                       santo.pelindung.toLowerCase().includes(keyword);
+            });
+            renderSaints(filteredData);
+        });
+
+        // LOGIKA FILTER INISIAL (Sidebar Kanan)
+        document.querySelectorAll('.alpha-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.alpha-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                searchInput.value = '';
+
+                const letter = this.getAttribute('data-letter');
+                
+                if(letter === 'ALL') {
+                    renderSaints(dataSantoItalia);
+                } else {
+                    const filteredData = dataSantoItalia.filter(santo => getCleanInitial(santo.nama) === letter);
+                    renderSaints(filteredData);
+                }
+            });
+        });
+
+    </script>
+</body>
+</html>
