@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Region Santo & Santa - GloriaTruth</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Montserrat:wght@300;500;700;italic&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --glass-bg: rgba(0, 0, 0, 0.45);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --text-color: #ffffff;
+            --accent: #ffcc00;
+        }
+
+        html, body { overflow-x: hidden; margin: 0; padding: 0; width: 100%; }
+
+        @keyframes blurIn {
+            from { filter: blur(30px); opacity: 0; transform: scale(1.03); }
+            to { filter: blur(0); opacity: 1; transform: scale(1); }
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), 
+                        url('https://files.catbox.moe/zoym9j.jpg') center/cover fixed;
+            color: var(--text-color);
+            min-height: 100vh;
+            animation: blurIn 1.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+            padding-bottom: 60px;
+        }
+
+        * { box-sizing: border-box; }
+
+        .top-bar {
+            position: sticky; top: 15px; margin: 15px 20px; padding: 12px 25px;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(20px);
+            border-radius: 50px; border: 1px solid var(--glass-border);
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .btn-back {
+            display: flex; justify-content: center; align-items: center;
+            width: 40px; height: 40px; border-radius: 50%;
+            background: rgba(255, 204, 0, 0.1); border: 1px solid var(--accent);
+            color: var(--accent); text-decoration: none;
+            transition: all 0.3s ease; z-index: 2;
+        }
+        .btn-back svg { width: 20px; height: 20px; }
+        .btn-back:hover { 
+            background: var(--accent); color: #000; 
+            transform: translateX(-5px) scale(1.05); 
+            box-shadow: 0 0 15px rgba(255, 204, 0, 0.5); 
+        }
+
+        #wib-clock {
+            position: absolute; left: 50%; transform: translateX(-50%);
+            font-size: 0.9rem; font-weight: 500; letter-spacing: 1px; z-index: 1;
+        }
+
+        .container { max-width: 1100px; margin: 40px auto; padding: 0 20px; text-align: center; }
+        
+        h1 { 
+            font-family: 'Cinzel', serif; font-size: clamp(1.8rem, 6vw, 2.5rem); 
+            letter-spacing: 3px; margin-bottom: 10px; color: var(--accent); 
+            text-shadow: 0 0 15px rgba(255,204,0,0.3);
+        }
+        .subtitle { font-size: 0.95rem; opacity: 0.8; margin-bottom: 40px; font-weight: 300; }
+
+        .region-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .region-card {
+            background: var(--glass-bg); backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border); border-radius: 20px;
+            padding: 25px 20px; text-decoration: none; color: var(--text-color);
+            display: flex; align-items: center; gap: 18px;
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            position: relative; overflow: hidden;
+            text-align: left; cursor: pointer;
+        }
+
+        .region-card:hover {
+            transform: translateY(-5px); background: rgba(255,255,255,0.08);
+            border-color: var(--accent); box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+        }
+
+        .flag-icon {
+            font-size: 3rem; filter: drop-shadow(0 0 8px rgba(0,0,0,0.6));
+            min-width: 60px; text-align: center;
+        }
+
+        .region-info { flex: 1; }
+
+        .region-info h2 {
+            font-family: 'Cinzel', serif; margin: 0 0 5px 0; font-size: 1.3rem;
+            color: var(--accent); font-weight: 700; display: flex; justify-content: space-between; align-items: center;
+        }
+
+        /* Lencana (Badge) Jumlah Santo/Santa */
+        .saint-count {
+            background: rgba(255, 204, 0, 0.2); border: 1px solid var(--accent);
+            color: var(--accent); font-size: 0.75rem; padding: 3px 8px; border-radius: 12px;
+            font-family: 'Montserrat', sans-serif; font-weight: bold; letter-spacing: 0.5px;
+        }
+
+        .region-info p { margin: 8px 0 0 0; font-size: 0.85rem; opacity: 0.8; font-weight: 300; line-height: 1.4; }
+
+        #nav-loading {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.95);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 10000; opacity: 0; pointer-events: none; transition: opacity 0.5s ease;
+        }
+        #nav-loading.active { opacity: 1; pointer-events: auto; }
+        .nav-progress-container { width: 250px; height: 3px; background: rgba(255,255,255,0.1); border-radius: 5px; overflow: hidden; margin-bottom: 15px; }
+        #nav-bar { width: 0%; height: 100%; background: var(--accent); box-shadow: 0 0 15px var(--accent); }
+        .loading-text { font-family: 'Montserrat', sans-serif; font-style: italic; color: var(--accent); font-size: 0.95rem; letter-spacing: 1px; }
+
+    </style>
+</head>
+<body>
+
+    <div id="nav-loading">
+        <div class="nav-progress-container"><div id="nav-bar"></div></div>
+        <div class="loading-text">Menuju Region...</div>
+    </div>
+
+    <div class="top-bar">
+        <a href="home.html" class="btn-back" title="Kembali ke Menu">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </a>
+        <div id="wib-clock">WIB: --:--:--</div>
+        <div style="width: 40px;"></div> 
+    </div>
+
+    <div class="container">
+        <h1>PETA KESUCIAN DUNIA</h1>
+        <p class="subtitle">Pilih negara untuk melihat daftar Santo, Santa, dan Martir dari wilayah tersebut.</p>
+        
+        <div id="region-container" class="region-grid">
+            </div>
+    </div>
+
+    <script>
+        function updateClock() {
+            const time = new Date().toLocaleTimeString('id-ID', {timeZone:'Asia/Jakarta', hour12:false});
+            document.getElementById('wib-clock').textContent = `WIB: ${time}`;
+        }
+        setInterval(updateClock, 1000); updateClock();
+
+        // DATABASE NEGARA (Sistem 1 File per Negara)
+        // file_id akan mengarahkan ke file HTML masing-masing (contoh: italia.html, indonesia.html)
+        const dataRegion = [
+            { file_id: "italia", nama: "Italia", bendera: "🇮🇹", count: "900+", desc: "Pusat lahirnya para Bapa Gereja, martir Roma, dan pendiri ordo besar Katolik." },
+            { file_id: "prancis", nama: "Prancis", bendera: "🇫🇷", count: "200+", desc: "Dikenal dengan spiritualitas mendalam dan penampakan suci Bunda Maria." },
+            { file_id: "spanyol", nama: "Spanyol", bendera: "🇪🇸", count: "150+", desc: "Bumi para mistikus agung, pujangga gereja, dan misionaris tangguh." },
+            { file_id: "timurtengah", nama: "Timur Tengah", bendera: "🌍", count: "100+", desc: "Tempat lahirnya Kekristenan, bapa pertapa padang gurun, dan para rasul." },
+            { file_id: "inggris", nama: "Inggris Raya", bendera: "🇬🇧", count: "80+", desc: "Kaya akan martir revolusi yang mempertahankan iman dan teolog besar." },
+            { file_id: "irlandia", nama: "Irlandia", bendera: "🇮🇪", count: "60+", desc: "Pulau para Orang Kudus dan Cendekiawan tangguh penyebar iman." },
+            { file_id: "jerman", nama: "Jerman", bendera: "🇩🇪", count: "100+", desc: "Tanah para biarawati mistikus terkemuka dan cendekiawan gereja." },
+            { file_id: "polandia", nama: "Polandia", bendera: "🇵🇱", count: "50+", desc: "Pelindung iman di masa modern dan pusat penyebar Kerahiman Ilahi." },
+            { file_id: "portugal", nama: "Portugal", bendera: "🇵🇹", count: "30+", desc: "Negara Bunda Maria dari Fatima dan pengkhotbah ulung dunia." },
+            { file_id: "amerika", nama: "Amerika Serikat", bendera: "🇺🇸", count: "15+", desc: "Para pendidik teladan dan pelayan kaum imigran miskin di dunia baru." },
+            { file_id: "meksiko", nama: "Meksiko", bendera: "🇲🇽", count: "35+", desc: "Benua dengan devosi kuat pada Guadalupe dan puluhan martir Cristero." },
+            { file_id: "peru", nama: "Peru", bendera: "🇵🇪", count: "5+", desc: "Tempat lahirnya santo-santa pertama di benua Amerika Selatan." },
+            { file_id: "india", nama: "India", bendera: "🇮🇳", count: "10+", desc: "Tanah misi peninggalan Santo Tomas dan pelayanan kasih tanpa batas." },
+            { file_id: "filipina", nama: "Filipina", bendera: "🇵🇭", count: "2", desc: "Bintang kekristenan Asia dengan sejarah kemartiran pemuda yang berani." },
+            { file_id: "jepang", nama: "Jepang", bendera: "🇯🇵", count: "42+", desc: "Saksi darah keteguhan para martir Nagasaki demi mempertahankan iman." },
+            { file_id: "korea", nama: "Korea Selatan", bendera: "🇰🇷", count: "103", desc: "Gereja epik yang didirikan kaum awam dan disuburkan oleh darah ratusan martir." },
+            { file_id: "vietnam", nama: "Vietnam", bendera: "🇻🇳", count: "117", desc: "Kisah ketahanan iman mutlak di bawah penyiksaan penguasa di abad pertengahan." },
+            { file_id: "uganda", nama: "Uganda", bendera: "🇺🇬", count: "22", desc: "Para pemuda martir Afrika yang lebih memilih mati dibakar daripada menyangkal Kristus." },
+            { file_id: "indonesia", nama: "Indonesia", bendera: "🇮🇩", count: "Beato/Misionaris", desc: "Sejarah benih iman dari para misionaris awal dan martir di kepulauan Nusantara." }
+        ];
+
+        const container = document.getElementById('region-container');
+        const loadingOverlay = document.getElementById('nav-loading');
+        const navBar = document.getElementById('nav-bar');
+
+        dataRegion.forEach(region => {
+            const card = document.createElement('a');
+            
+            // SISTEM BARU: Mengarahkan langsung ke nama file HTML-nya!
+            // Contoh: indonesia.html, italia.html
+            card.href = `${region.file_id}.html`;
+            card.className = 'region-card';
+
+            card.innerHTML = `
+                <div class="flag-icon">${region.bendera}</div>
+                <div class="region-info">
+                    <h2>${region.nama} <span class="saint-count">${region.count}</span></h2>
+                    <p>${region.desc}</p>
+                </div>
+            `;
+
+            // Animasi Loading
+            card.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetUrl = this.href;
+                loadingOverlay.classList.add('active');
+
+                const duration = Math.floor(Math.random() * (3000 - 1500 + 1)) + 1500;
+                let startTime = null;
+
+                function animateProgress(timestamp) {
+                    if (!startTime) startTime = timestamp;
+                    const progress = timestamp - startTime;
+                    const easeOutQuart = 1 - Math.pow(1 - (progress/duration), 4);
+                    const percentage = Math.min(easeOutQuart * 100, 100);
+                    
+                    navBar.style.width = percentage + '%';
+
+                    if (progress < duration) {
+                        window.requestAnimationFrame(animateProgress);
+                    } else {
+                        setTimeout(() => { window.location.href = targetUrl; }, 300);
+                    }
+                }
+                window.requestAnimationFrame(animateProgress);
+            });
+
+            container.appendChild(card);
+        });
+    </script>
+</body>
+</html>
